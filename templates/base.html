@@ -23,6 +23,9 @@
 
     <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
-    {% block extra_javascripts %}{% endblock %}
+    <script type="text/javascript">
+        jsConfig.updateEditFieldsUrl = '{% url 'update-edit-fields' %}';
+        jsConfig.init();
+    </script>
 </body>
 </html>

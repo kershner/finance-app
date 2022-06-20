@@ -21,3 +21,31 @@ function removeClass(el, className) {
         el.className = el.className.replace(reg, ' ');
     }
 }
+
+function fetchWrapper(endpoint, method, params, callback) {
+    var callParams = {
+        method      : method,
+        credentials : 'include'
+    };
+    if (params instanceof FormData) {
+        callParams['body'] = params
+    } else {
+        if (method.toLowerCase() === 'post') {
+            callParams['body'] = JSON.stringify(params);
+        }
+    }
+
+    fetch(endpoint, callParams)
+    .then((response) => {
+        return response.text();
+    })
+    .then((data) => {
+        console.log(data.body);
+        let response = JSON.parse(data);
+        console.log(response);
+        callback(response);
+    })
+    .catch(function(ex) {
+        console.log('Parsing Failed: ', ex);
+    });
+}

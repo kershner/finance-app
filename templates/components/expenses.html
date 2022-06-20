@@ -2,9 +2,9 @@
 
 <!-- Expenses -->
 <div class="expenses-wrapper">
-    <div class="component-title">Expenses <span class="expenses-toggle">Expand</span></div>
+    <div class="component-title">Expenses <span class="expenses-toggle">Collapse</span></div>
 
-    <div class="expenses-list hidden">
+    <div class="expenses-list">
         {% with expense_groups=user.get_expenses_by_group %}
         {% for group, expenses in expense_groups.items %}
             <div class="expense-group">
@@ -13,7 +13,13 @@
                 {% for expense in expenses %}
                 <div class="expense" data-id="{{ expense.id }}">
                     <p>{{ expense }}</p>
-                    <p>{% money_localize expense.amount %}</p>
+                    <p class="edit-field"
+                       data-type="number"
+                       data-model="expense"
+                       data-label="{{ expense }}"
+                       data-field="amount"
+                       data-id="{{ expense.id }}"
+                       data-current-value="{{ expense.amount }}">{% money_localize expense.amount %}</p>
                 </div>
                 {% endfor %}
             </div>

@@ -1,8 +1,26 @@
 // Colors
 $black: rgb(82, 82, 82)
+$green: #198754
+$blue: #0d6efd
+$grey: #ced4da
 
 // Fonts
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap')
+
+// Breakpoints
+$small-breakpoint: 780px
+
+button
+  cursor: pointer
+  background-color: $blue
+  color: white
+  padding: 0.375rem 0.75rem
+  font-weight: 400
+  border: 1px solid $grey
+  border-radius: 0.375rem
+
+  &:hover
+    background-color: darken($blue, 10%)
 
 body, html
   @extend %no-padding-margin
@@ -12,38 +30,22 @@ body, html
 
 /* Upper Section ******************************************************************************************************/
 .upper-section
-  display: flex
-  justify-content: center
   padding: 1em 0
 
-  .overview-section
-    margin: 0 1em
-    max-width: 30em
-    text-align: center
+  .stats-section
+    @extend %component-margins
 
-    .section-values
-      display: flex
-      flex-wrap: wrap
-      justify-content: center
+  .section-content
+    display: flex
+    flex-wrap: wrap
+    justify-content: center
+
 
 /* Middle Section *****************************************************************************************************/
 .middle-section
   display: flex
   flex-direction: column
   align-items: flex-start
-
-  .years-to-project-form
-    @extend %component-margins
-
-    form
-      .form-row
-        .form-row-inputs
-          display: flex
-          justify-content: center
-          input
-            max-width: 50px
-          button
-            cursor: pointer
 
   .expenses-wrapper
     @extend %component-margins
@@ -88,20 +90,54 @@ body, html
 
   .predictions-table
     @extend %component-margins
+    width: 100%
     align-self: center
 
+    .years-to-project-form
+      @extend %component-margins
+
+      form
+        .form-row
+          text-align: center
+
+          .form-row-inputs
+            display: flex
+            justify-content: center
+
+            input,
+            button
+              padding: 0.375rem 0.75rem
+              font-weight: 400
+              line-height: 1.5
+              border: 1px solid $grey
+              border-radius: 0.375rem 0 0 0.375rem
+            input
+              max-width: 30px
+              border-right: 0
+              padding-right: 0
+            button
+              border-radius: 0 0.375rem 0.375rem 0
+
     table
+      @extend  %component-margins
+      border-spacing: 0
+      width: 100%
+
+      @media(min-width: $small-breakpoint)
+        width: 60%
+
       th, td
-        padding: 0 1em
+        padding: .5em
 
       .predictions-headers
         th
           font-weight: bold
           text-align: left
+          border-bottom: 3px solid $grey
 
       .prediction-row
-        td
-
+        &.striped
+          background-color: lighten($grey, 15%)
 
 /* Utility stuff ******************************************************************************************************/
 // Value with label
@@ -135,3 +171,27 @@ body, html
   font-weight: bold
   text-align: center
   font-size: 1.25em
+
+.edit-field
+  cursor: pointer
+  &:hover
+    @extend .edit-field-active
+
+.edit-field-active
+  color: $blue
+  text-decoration: underline
+
+.edit-field-form
+  position: absolute
+  display: flex
+  flex-direction: column
+  padding: .25em .5em
+  background-color: white
+  border-radius: .25em
+  border: 1px solid $grey
+  max-width: 7em
+  label
+    font-size: 1.2em
+  input,
+  button
+    margin-top: .25em

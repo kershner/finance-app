@@ -1,4 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap");
+button {
+  cursor: pointer;
+  background-color: #0d6efd;
+  color: white;
+  padding: 0.375rem 0.75rem;
+  font-weight: 400;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+}
+button:hover {
+  background-color: #0257d5;
+}
+
 body, html {
   color: #525252;
   font-family: "Roboto", sans-serif;
@@ -6,16 +19,9 @@ body, html {
 
 /* Upper Section ******************************************************************************************************/
 .upper-section {
-  display: flex;
-  justify-content: center;
   padding: 1em 0;
 }
-.upper-section .overview-section {
-  margin: 0 1em;
-  max-width: 30em;
-  text-align: center;
-}
-.upper-section .overview-section .section-values {
+.upper-section .section-content {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -26,16 +32,6 @@ body, html {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-}
-.middle-section .years-to-project-form form .form-row .form-row-inputs {
-  display: flex;
-  justify-content: center;
-}
-.middle-section .years-to-project-form form .form-row .form-row-inputs input {
-  max-width: 50px;
-}
-.middle-section .years-to-project-form form .form-row .form-row-inputs button {
-  cursor: pointer;
 }
 .middle-section .expenses-wrapper {
   width: 100%;
@@ -75,15 +71,53 @@ body, html {
   justify-content: center;
 }
 .lower-section .predictions-table {
+  width: 100%;
   align-self: center;
 }
+.lower-section .predictions-table .years-to-project-form form .form-row {
+  text-align: center;
+}
+.lower-section .predictions-table .years-to-project-form form .form-row .form-row-inputs {
+  display: flex;
+  justify-content: center;
+}
+.lower-section .predictions-table .years-to-project-form form .form-row .form-row-inputs input,
+.lower-section .predictions-table .years-to-project-form form .form-row .form-row-inputs button {
+  padding: 0.375rem 0.75rem;
+  font-weight: 400;
+  line-height: 1.5;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem 0 0 0.375rem;
+}
+.lower-section .predictions-table .years-to-project-form form .form-row .form-row-inputs input {
+  max-width: 30px;
+  border-right: 0;
+  padding-right: 0;
+}
+.lower-section .predictions-table .years-to-project-form form .form-row .form-row-inputs button {
+  border-radius: 0 0.375rem 0.375rem 0;
+}
+.lower-section .predictions-table table {
+  border-spacing: 0;
+  width: 100%;
+}
+@media (min-width: 780px) {
+  .lower-section .predictions-table table {
+    width: 60%;
+  }
+}
 .lower-section .predictions-table table th, .lower-section .predictions-table table td {
-  padding: 0 1em;
+  padding: 0.5em;
 }
 .lower-section .predictions-table table .predictions-headers th {
   font-weight: bold;
   text-align: left;
+  border-bottom: 3px solid #ced4da;
 }
+.lower-section .predictions-table table .prediction-row.striped {
+  background-color: #fafafb;
+}
+
 /* Utility stuff ******************************************************************************************************/
 .value-with-label {
   display: flex;
@@ -107,7 +141,7 @@ body, html {
   display: none !important;
 }
 
-.middle-section .years-to-project-form, .middle-section .expenses-wrapper, .lower-section .predictions-table {
+.upper-section .stats-section, .middle-section .expenses-wrapper, .lower-section .predictions-table, .lower-section .predictions-table .years-to-project-form, .lower-section .predictions-table table {
   margin: 0.5em auto;
 }
 
@@ -115,6 +149,32 @@ body, html {
   font-weight: bold;
   text-align: center;
   font-size: 1.25em;
+}
+
+.edit-field {
+  cursor: pointer;
+}
+.edit-field-active, .edit-field:hover {
+  color: #0d6efd;
+  text-decoration: underline;
+}
+
+.edit-field-form {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  padding: 0.25em 0.5em;
+  background-color: white;
+  border-radius: 0.25em;
+  border: 1px solid #ced4da;
+  max-width: 7em;
+}
+.edit-field-form label {
+  font-size: 1.2em;
+}
+.edit-field-form input,
+.edit-field-form button {
+  margin-top: 0.25em;
 }
 
 /*# sourceMappingURL=main.css.map */

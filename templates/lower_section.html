@@ -4,25 +4,7 @@
             Fuzzy Net Income Calculations - {{ years_to_project }} year{% if years_to_project != 1 %}s{% endif %}
         </div>
 
-        <!-- Net income predictions table -->
-        <table>
-            <tr class="predictions-headers">
-                <th>Months</th>
-                <th>Date</th>
-                <th>Age</th>
-                <th>Total</th>
-                <th>Net Income</th>
-            </tr>
-
-            {% for row in net_income_calculations %}
-            <tr class="prediction-row">
-                <td>{{ row.num_months }} month{% if row.num_months != 1 %}s{% endif %}</td>
-                <td>{{ row.date_string }}</td>
-                <td>{{ row.new_age }}</td>
-                <td>{{ row.new_total }}</td>
-                <td>{{ row.net_income }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+        {% include 'components/years_to_project_form.html' %}
+        {% include 'components/net_income_predictions_table.html' %}
     </div>
 </div>
