@@ -85,6 +85,7 @@ class Expense(models.Model):
     name = models.CharField(null=False, blank=False, max_length=100)
     group = models.ForeignKey(ExpenseGroup, on_delete=models.SET_NULL, blank=True, null=True)
     amount = MoneyField(max_digits=14, decimal_places=2, default_currency='USD')
+    multiplier = models.IntegerField(default=1)
 
     def __str__(self):
         return '{}'.format(self.name)

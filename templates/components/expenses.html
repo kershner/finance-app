@@ -8,7 +8,13 @@
         {% with expense_groups=user.get_expenses_by_group %}
         {% for group, expenses in expense_groups.items %}
             <div class="expense-group">
-                <div class="expense-group-title">{{ group }}</div>
+                <div class="expense-group-title">
+                    <span>{{ group }}</span>
+
+                    {% if forloop.counter == 1 %}
+                        <span>Monthly Expense</span>
+                    {% endif %}
+                </div>
 
                 {% for expense in expenses %}
                 <div class="expense" data-id="{{ expense.id }}">

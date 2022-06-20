@@ -3,8 +3,24 @@ let jsConfig = {
 };
 
 jsConfig.init = function() {
+    //jsConfig.colorElements();
     jsConfig.expandCollapseExpenses();
     jsConfig.addEditFieldClickEvent();
+};
+
+jsConfig.colorElements = function() {
+    let randomColorElements = [
+        ...document.querySelectorAll('.value-with-label p:first-of-type'),
+        ...document.querySelectorAll('.component-title'),
+        //...document.querySelectorAll('.expense-group-title'),
+        ...document.querySelectorAll('th')
+    ];
+
+    randomColorElements.forEach(element => {
+        element.style.color = randomColor({
+            'luminosity': 'bright'
+        });
+    })
 };
 
 // Expand/Collapse for the Expenses list

@@ -3,3 +3,6 @@ parameters.json
 app/__pycache__/
 app/migrations/__pycache__/
 *.pyc
+static/vendor/
+app/management/commands/create_expenses.py
+*.py

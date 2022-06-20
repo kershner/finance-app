@@ -1,11 +1,12 @@
 // Colors
 $black: rgb(82, 82, 82)
-$green: #198754
 $blue: #0d6efd
 $grey: #ced4da
 
 // Fonts
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap')
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap')
+%main-font
+  font-family: 'Ubuntu', sans-serif
 
 // Breakpoints
 $small-breakpoint: 780px
@@ -24,8 +25,8 @@ button
 
 body, html
   @extend %no-padding-margin
+  @extend %main-font
   color: $black
-  font-family: 'Roboto', sans-serif
 
 
 /* Upper Section ******************************************************************************************************/
@@ -73,6 +74,8 @@ body, html
         .expense-group-title
           font-weight: bold
           text-align: left
+          display: flex
+          justify-content: space-between
 
         .expense
           display: flex
@@ -95,6 +98,23 @@ body, html
 
     .years-to-project-form
       @extend %component-margins
+      display: flex
+      justify-content: center
+      align-items: baseline
+
+      a
+        text-decoration: none
+
+      .years-to-project-control
+        font-size: 1em
+        padding: 0.2rem 0.75rem
+        cursor: pointer
+        border: 1px solid $grey
+        border-radius: 0.375rem
+
+        &:hover
+          background-color: $blue
+          color: white
 
       form
         .form-row
@@ -154,7 +174,6 @@ body, html
 
     &:first-child
       font-size: 1.75em
-    &:last-child
 
 %no-padding-margin
   padding: 0
@@ -168,9 +187,8 @@ body, html
 
 .component-title
   @extend %no-padding-margin
-  font-weight: bold
   text-align: center
-  font-size: 1.25em
+  font-size: 1.5em
 
 .edit-field
   cursor: pointer
@@ -192,6 +210,7 @@ body, html
   max-width: 7em
   label
     font-size: 1.2em
+    word-break: break-all
   input,
   button
     margin-top: .25em

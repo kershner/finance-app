@@ -8,11 +8,19 @@ import json
 
 
 class HomeView(View):
+    def get_user(self):
+        try:
+            return CustomUser.objects.get(id=1)
+        except CustomUser.DoesNotExist:
+            return None
+
     def get(self, request):
-        return self.common_response(request, years_to_project=1)
+        years = int(request.GET.get('years', 1))
+        years = years if years > 0 else 1
+        return self.common_response(request, years_to_project=years)
 
     def post(self, request):
-        years_to_project = request.POST.get('years')
+        years_to_project = int(request.POST.get('years', 1))
         return self.common_response(request, years_to_project=years_to_project)
 
     def common_response(self, request, years_to_project):
@@ -29,12 +37,6 @@ class HomeView(View):
             })
         return TemplateResponse(request, 'base.html', ctx)
 
-    def get_user(self):
-        try:
-            return CustomUser.objects.get(id=1)
-        except CustomUser.DoesNotExist:
-            return None
-
 
 @method_decorator(csrf_exempt, name='dispatch')
 class UpdateEditFieldsView(View):
@@ -49,7 +51,6 @@ class UpdateEditFieldsView(View):
     def post(self, request):
         try:
             body = json.loads(request.body)
-            print(body)
             model = body['model']
             instance_id = body['id']
             field = body['field']
