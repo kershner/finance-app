@@ -11,6 +11,7 @@ $grey: #ced4da
 // Breakpoints
 $small-breakpoint: 780px
 
+// Universal stuff
 button
   cursor: pointer
   background-color: $blue
@@ -203,14 +204,16 @@ body, html
   position: absolute
   display: flex
   flex-direction: column
+  align-items: center
   padding: .25em .5em
   background-color: white
   border-radius: .25em
   border: 1px solid $grey
-  max-width: 7em
+
   label
     font-size: 1.2em
     word-break: break-all
   input,
   button
     margin-top: .25em
+    max-width: 5em

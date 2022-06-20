@@ -187,11 +187,11 @@ body, html {
   position: absolute;
   display: flex;
   flex-direction: column;
+  align-items: center;
   padding: 0.25em 0.5em;
   background-color: white;
   border-radius: 0.25em;
   border: 1px solid #ced4da;
-  max-width: 7em;
 }
 .edit-field-form label {
   font-size: 1.2em;
@@ -200,6 +200,7 @@ body, html {
 .edit-field-form input,
 .edit-field-form button {
   margin-top: 0.25em;
+  max-width: 5em;
 }
 
 /*# sourceMappingURL=main.css.map */

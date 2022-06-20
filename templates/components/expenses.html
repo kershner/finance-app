@@ -18,11 +18,17 @@
 
                 {% for expense in expenses %}
                 <div class="expense" data-id="{{ expense.id }}">
-                    <p>{{ expense }}</p>
+                    <p class="edit-field"
+                       data-type="text"
+                       data-model="expense"
+                       data-label="{{ expense }}"
+                       data-field="name"
+                       data-id="{{ expense.id }}"
+                       data-current-value="{{ expense.name }}">{{ expense }}</p>
                     <p class="edit-field"
                        data-type="number"
                        data-model="expense"
-                       data-label="{{ expense }}"
+                       data-label="{{ expense }} amount"
                        data-field="amount"
                        data-id="{{ expense.id }}"
                        data-current-value="{{ expense.amount }}">{% money_localize expense.amount %}</p>

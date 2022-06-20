@@ -12,6 +12,7 @@ class CustomUser(AbstractUser):
     birth_date = models.DateField(null=True, blank=True)
     starting_value = MoneyField(max_digits=14, decimal_places=2, default_currency='USD', null=True, blank=True)
     income_two_weeks = MoneyField(max_digits=14, decimal_places=2, default_currency='USD', null=True, blank=True)
+    income_one_month = MoneyField(max_digits=14, decimal_places=2, default_currency='USD', null=True, blank=True)
 
     def get_current_age(self):
         return math.floor((date.today() - self.birth_date).days / 365)
@@ -33,12 +34,11 @@ class CustomUser(AbstractUser):
         return expenses_grouped
 
     def get_income_calculations(self):
-        total_monthly_income = self.income_two_weeks * 2
+        total_monthly_income = self.income_one_month
         total_monthly_expenses = Money(self.get_expenses().aggregate(Sum('amount'))['amount__sum'], 'USD')
         net_monthly_income = total_monthly_income - total_monthly_expenses
 
         return {
-            'total_monthly_income': total_monthly_income,
             'total_monthly_expenses': total_monthly_expenses,
             'net_monthly_income': net_monthly_income
         }
