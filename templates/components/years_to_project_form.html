@@ -1,0 +1,13 @@
+<!-- Years to Project Form -->
+<div class="years-to-project-form">
+    <form id="years-to-project-form" method="post" action="">
+        {% csrf_token %}
+        <div class="form-row">
+            <label class="component-title" for="years">Years to Project</label>
+            <div class="form-row-inputs">
+                <input name="years" type="number" min=1 value="{{ years_to_project }}" required>
+                <button type="submit">Go</button>
+            </div>
+        </div>
+    </form>
+</div>

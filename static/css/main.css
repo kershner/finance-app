@@ -1,5 +1,120 @@
-body h2 {
-  color: purple;
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap");
+body, html {
+  color: #525252;
+  font-family: "Roboto", sans-serif;
+}
+
+/* Upper Section ******************************************************************************************************/
+.upper-section {
+  display: flex;
+  justify-content: center;
+  padding: 1em 0;
+}
+.upper-section .overview-section {
+  margin: 0 1em;
+  max-width: 30em;
+  text-align: center;
+}
+.upper-section .overview-section .section-values {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Middle Section *****************************************************************************************************/
+.middle-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.middle-section .years-to-project-form form .form-row .form-row-inputs {
+  display: flex;
+  justify-content: center;
+}
+.middle-section .years-to-project-form form .form-row .form-row-inputs input {
+  max-width: 50px;
+}
+.middle-section .years-to-project-form form .form-row .form-row-inputs button {
+  cursor: pointer;
+}
+.middle-section .expenses-wrapper {
+  width: 100%;
+  text-align: center;
+}
+.middle-section .expenses-wrapper .expenses-toggle {
+  cursor: pointer;
+  text-decoration: underline;
+  color: blue;
+  font-weight: 100;
+  font-size: 0.8em;
+}
+.middle-section .expenses-wrapper .expenses-toggle:hover {
+  text-decoration: none !important;
+}
+.middle-section .expenses-wrapper .expenses-list {
+  margin: 0 auto;
+  padding: 0 1em;
+  max-width: 20em;
+}
+.middle-section .expenses-wrapper .expenses-list .expense-group {
+  margin: 0.5em 0;
+}
+.middle-section .expenses-wrapper .expenses-list .expense-group .expense-group-title {
+  font-weight: bold;
+  text-align: left;
+}
+.middle-section .expenses-wrapper .expenses-list .expense-group .expense {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dotted;
+}
+/* Lower Section ******************************************************************************************************/
+.lower-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.lower-section .predictions-table {
+  align-self: center;
+}
+.lower-section .predictions-table table th, .lower-section .predictions-table table td {
+  padding: 0 1em;
+}
+.lower-section .predictions-table table .predictions-headers th {
+  font-weight: bold;
+  text-align: left;
+}
+/* Utility stuff ******************************************************************************************************/
+.value-with-label {
+  display: flex;
+  flex-direction: column;
+  padding: 0.25em 0.5em;
+  margin: 0.25em;
+  text-align: center;
+}
+.value-with-label p {
+  margin: 0 0.25em;
+}
+.value-with-label p:first-child {
+  font-size: 1.75em;
+}
+.component-title, body, html, .middle-section .expenses-wrapper .expenses-list .expense-group .expense p, .value-with-label p {
+  padding: 0;
+  margin: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.middle-section .years-to-project-form, .middle-section .expenses-wrapper, .lower-section .predictions-table {
+  margin: 0.5em auto;
+}
+
+.component-title {
+  font-weight: bold;
+  text-align: center;
+  font-size: 1.25em;
 }
 
 /*# sourceMappingURL=main.css.map */

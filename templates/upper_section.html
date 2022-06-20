@@ -1,0 +1,51 @@
+{% load djmoney %}
+
+<div class="upper-section">
+    <!-- Profile/personal info section -->
+    <div class="overview-section">
+        <h class="component-title">
+            {{ user.first_name }} {{ user.last_name }}
+        </h>
+
+        <div class="section-values">
+            <div class="value-with-label">
+                <p>{{ user.get_current_age }}</p>
+                <p>Age</p>
+            </div>
+
+            <div class="value-with-label">
+                <p>{% money_localize user.starting_value %}</p>
+                <p>Starting Value</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overview section -->
+    <div class="overview-section">
+        <div class="component-title">Overview</div>
+
+        <div class="section-values">
+            <div class="value-with-label">
+                <p>{% money_localize user.get_income_calculations.total_monthly_expenses %}</p>
+                <p>Total Monthly Expenses</p>
+            </div>
+
+            <div class="value-with-label">
+                <p>{% money_localize user.get_income_calculations.total_monthly_income %}</p>
+                <p>Total Monthly Income</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calculations section -->
+    <div class="overview-section">
+        <div class="component-title">Calculations</div>
+
+        <div class="section-values">
+            <div class="value-with-label">
+                <p>{% money_localize user.get_income_calculations.net_monthly_income %}</p>
+                <p>Net Monthly Income</p>
+            </div>
+        </div>
+    </div>
+</div>
