@@ -1,10 +1,14 @@
 let jsConfig = {
+    'useColors': undefined,
     'updateEditFieldsUrl': '',
     'updateCollapseSettingUrl': ''
 };
 
 jsConfig.init = function() {
-    //jsConfig.colorElements();
+    if (jsConfig.useColors) {
+        jsConfig.colorElements();
+    }
+
     jsConfig.expandCollapseExpenses();
     jsConfig.addEditFieldClickEvent();
 };
@@ -13,7 +17,7 @@ jsConfig.colorElements = function() {
     let randomColorElements = [
         ...document.querySelectorAll('.value-with-label p:first-of-type'),
         ...document.querySelectorAll('.component-title'),
-        //...document.querySelectorAll('.expense-group-title'),
+        ...document.querySelectorAll('.expense-group-title'),
         ...document.querySelectorAll('th')
     ];
 
@@ -68,8 +72,7 @@ jsConfig.editFieldClickEvent = function(editField) {
     jsConfig.editFormTeardown();
     addClass(editField, 'edit-field-active');
 
-    jsConfig.addEditFieldForm();
-
+    jsConfig.addEditFieldForm(editField);
     jsConfig.editFormSubmitEvent(editField);
 };
 

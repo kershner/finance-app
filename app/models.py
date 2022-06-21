@@ -13,7 +13,9 @@ class CustomUser(AbstractUser):
     starting_value = MoneyField(max_digits=14, decimal_places=2, default_currency='USD', null=True, blank=True)
     income_two_weeks = MoneyField(max_digits=14, decimal_places=2, default_currency='USD', null=True, blank=True)
     income_one_month = MoneyField(max_digits=14, decimal_places=2, default_currency='USD', null=True, blank=True)
+
     collapse_expenses = models.BooleanField(default=False)
+    use_colors = models.BooleanField(default=False)
 
     def get_current_age(self):
         return math.floor((date.today() - self.birth_date).days / 365)

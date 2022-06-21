@@ -25,6 +25,7 @@
     <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
     <script type="text/javascript">
+        jsConfig.useColors = {{ request.user.use_colors|yesno:'true,false' }};
         jsConfig.updateEditFieldsUrl = '{% url 'update-edit-fields' %}';
         jsConfig.updateCollapseSettingUrl = '{% url 'update-collapse-setting' %}';
         jsConfig.init();

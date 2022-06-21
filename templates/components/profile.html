@@ -20,6 +20,8 @@
                   data-current-value="{{ user.last_name }}">
                 {{ user.last_name }}
             </span>
+
+            <a class="admin-edit-link" href="{% url 'admin:app_customuser_change' user.id %}">Edit</a>
         </div>
 
         <div class="section-content">

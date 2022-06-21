@@ -25,6 +25,9 @@ body, html {
 }
 
 /* Upper Section ******************************************************************************************************/
+.upper-section .admin-edit-link {
+  font-size: 0.6em;
+}
 .upper-section .section-content {
   display: flex;
   flex-wrap: wrap;
