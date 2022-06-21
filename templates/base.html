@@ -26,6 +26,7 @@
     <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
     <script type="text/javascript">
         jsConfig.updateEditFieldsUrl = '{% url 'update-edit-fields' %}';
+        jsConfig.updateCollapseSettingUrl = '{% url 'update-collapse-setting' %}';
         jsConfig.init();
     </script>
 </body>

@@ -13,6 +13,7 @@ class CustomUser(AbstractUser):
     starting_value = MoneyField(max_digits=14, decimal_places=2, default_currency='USD', null=True, blank=True)
     income_two_weeks = MoneyField(max_digits=14, decimal_places=2, default_currency='USD', null=True, blank=True)
     income_one_month = MoneyField(max_digits=14, decimal_places=2, default_currency='USD', null=True, blank=True)
+    collapse_expenses = models.BooleanField(default=False)
 
     def get_current_age(self):
         return math.floor((date.today() - self.birth_date).days / 365)
@@ -25,11 +26,11 @@ class CustomUser(AbstractUser):
         expenses = self.get_expenses()
 
         for expense in expenses:
-            group_name = expense.group.name
-            if group_name not in expenses_grouped:
-                expenses_grouped[group_name] = [expense]
+            group = expense.group
+            if group not in expenses_grouped:
+                expenses_grouped[group] = [expense]
             else:
-                expenses_grouped[group_name].append(expense)
+                expenses_grouped[group].append(expense)
 
         return expenses_grouped
 

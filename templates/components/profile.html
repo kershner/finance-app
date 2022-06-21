@@ -1,47 +1,49 @@
 {% load djmoney %}
 
-<div class="profile-section">
-    <div class="component-title">
-        <span class="edit-field"
-              data-type="text"
-              data-model="user"
-              data-label="First Name"
-              data-field="first_name"
-              data-id="{{ user.id }}"
-              data-current-value="{{ user.first_name }}">
-            {{ user.first_name }}
-        </span>
-        <span class="edit-field"
-              data-model="user"
-              data-label="Last Name"
-              data-field="last_name"
-              data-id="{{ user.id }}"
-              data-current-value="{{ user.last_name }}">
-            {{ user.last_name }}
-        </span>
-    </div>
-
-    <div class="section-content">
-        <div class="value-with-label">
-            <p class="edit-field"
-               data-type="date"
-               data-model="user"
-               data-label="Birth Date"
-               data-field="birth_date"
-               data-id="{{ user.id }}"
-               data-current-value="{{ user.birth_date }}">{{ user.get_current_age }}</p>
-            <p>Age</p>
+<div class="component">
+    <div class="profile-section">
+        <div class="component-title">
+            <span class="edit-field"
+                  data-type="text"
+                  data-model="user"
+                  data-label="First Name"
+                  data-field="first_name"
+                  data-id="{{ user.id }}"
+                  data-current-value="{{ user.first_name }}">
+                {{ user.first_name }}
+            </span>
+            <span class="edit-field"
+                  data-model="user"
+                  data-label="Last Name"
+                  data-field="last_name"
+                  data-id="{{ user.id }}"
+                  data-current-value="{{ user.last_name }}">
+                {{ user.last_name }}
+            </span>
         </div>
 
-        <div class="value-with-label">
-            <p class="edit-field"
-               data-type="number"
-               data-model="user"
-               data-label="Starting Value"
-               data-field="starting_value"
-               data-id="{{ user.id }}"
-               data-current-value="{{ user.starting_value }}">{% money_localize user.starting_value %}</p>
-            <p>Starting Value</p>
+        <div class="section-content">
+            <div class="value-with-label">
+                <p class="edit-field"
+                   data-type="date"
+                   data-model="user"
+                   data-label="Birth Date"
+                   data-field="birth_date"
+                   data-id="{{ user.id }}"
+                   data-current-value="{{ user.birth_date }}">{{ user.get_current_age }}</p>
+                <p>Age</p>
+            </div>
+
+            <div class="value-with-label">
+                <p class="edit-field"
+                   data-type="number"
+                   data-model="user"
+                   data-label="Starting Value"
+                   data-field="starting_value"
+                   data-id="{{ user.id }}"
+                   data-current-value="{{ user.starting_value }}">{% money_localize user.starting_value %}</p>
+                <p>Starting Value</p>
+            </div>
         </div>
     </div>
 </div>

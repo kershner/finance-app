@@ -1,5 +1,6 @@
 let jsConfig = {
-    'updateEditFieldsUrl': ''
+    'updateEditFieldsUrl': '',
+    'updateCollapseSettingUrl': ''
 };
 
 jsConfig.init = function() {
@@ -29,13 +30,24 @@ jsConfig.expandCollapseExpenses = function() {
     let expensesList = document.querySelectorAll('.expenses-list')[0];
 
     expensesToggle.addEventListener('click', function(e) {
+        let params = {
+            'collapse': undefined
+        };
+
         if (hasClass(expensesList, 'hidden')) {
+            params.collapse = 0;
             removeClass(expensesList, 'hidden');
             expensesToggle.innerHTML = 'Collapse';
         } else {
+            params.collapse = 1;
             addClass(expensesList, 'hidden');
             expensesToggle.innerHTML = 'Expand';
         }
+
+        // Async fetch call to update user model setting
+        fetchWrapper(jsConfig.updateCollapseSettingUrl, 'post', params, function(data) {
+            console.log(data);
+        });
     });
 };
 
@@ -56,6 +68,12 @@ jsConfig.editFieldClickEvent = function(editField) {
     jsConfig.editFormTeardown();
     addClass(editField, 'edit-field-active');
 
+    jsConfig.addEditFieldForm();
+
+    jsConfig.editFormSubmitEvent(editField);
+};
+
+jsConfig.addEditFieldForm = function(editField) {
     // Create/append form to edit the value
     let top = `${editField.offsetTop + editField.offsetHeight}px`;
     let left = `${editField.offsetLeft}px`;
@@ -74,7 +92,9 @@ jsConfig.editFieldClickEvent = function(editField) {
         </div>
     `;
     document.body.appendChild(formTemplateDiv);
+};
 
+jsConfig.editFormSubmitEvent = function(editField) {
     // Form submit event
     document.querySelector('.edit-field-submit').addEventListener('click', function() {
         let params = {
