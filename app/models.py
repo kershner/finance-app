@@ -1,38 +1,35 @@
 from django.contrib.auth.models import AbstractUser
 from dateutil.relativedelta import relativedelta
 from datetime import timedelta, date
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.db import models
+from decimal import Decimal
 import math
 
 
 class CustomUser(AbstractUser):
     birth_date = models.DateField(null=True, blank=True)
     starting_value = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
-    income_two_weeks = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
-    income_one_month = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
-    collapse_expenses = models.BooleanField(default=False)
+    collapse_transactions = models.BooleanField(default=False)
     use_colors = models.BooleanField(default=False)
 
     def get_current_age(self):
         return math.floor((date.today() - self.birth_date).days / 365)
 
-    def get_expenses(self):
-        return MonthlyTransaction.objects.filter(user=self, type='ex').annotate(total_monthly_expenses=Sum('amount')).order_by('-total_monthly_expenses').all()
-
-    def get_income(self):
-        return MonthlyTransaction.objects.filter(user=self, type='in').annotate(total_monthly_income=Sum('amount')).order_by('-total_monthly_income').all()
+    def get_transactions(self, transaction_type):
+        return MonthlyTransaction.objects\
+            .filter(user=self, type=transaction_type)\
+            .annotate(total=Sum(F('multiplier') * F('amount')))\
+            .order_by('-total')\
+            .all()
 
     def get_investments(self):
-        return self.get_expenses().filter(group__type='ex', group__name='Investment').all()
+        return self.get_transactions('ex').filter(group__name='Investment').all()
 
     def get_transactions_by_group(self, transaction_type):
         transactions_grouped = {}
 
-        transactions = self.get_income()
-        if transaction_type == 'ex':
-            transactions = self.get_expenses()
-
+        transactions = self.get_transactions(transaction_type)
         for transaction in transactions:
             group = transaction.group
             if group not in transactions_grouped:
@@ -48,12 +45,20 @@ class CustomUser(AbstractUser):
     def get_expenses_by_group(self):
         return self.get_transactions_by_group('ex')
 
+    def get_monthly_transaction_total(self, transaction_type):
+        monthly_total = Decimal(0.0)
+        all_transactions = self.get_transactions(transaction_type)
+        for transaction in all_transactions:
+            monthly_total += transaction.amount * transaction.multiplier
+        return monthly_total
+
     def get_income_calculations(self):
-        total_monthly_income = self.income_one_month
-        total_monthly_expenses = self.get_expenses().aggregate(Sum('amount'))['amount__sum']
+        total_monthly_income = self.get_monthly_transaction_total('in')
+        total_monthly_expenses = self.get_monthly_transaction_total('ex')
         net_monthly_income = total_monthly_income - total_monthly_expenses
 
         return {
+            'total_monthly_income': total_monthly_income,
             'total_monthly_expenses': total_monthly_expenses,
             'net_monthly_income': net_monthly_income
         }

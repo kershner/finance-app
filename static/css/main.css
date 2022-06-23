@@ -40,11 +40,6 @@ body, html {
 .upper-section .admin-edit-link {
   font-size: 0.6em;
 }
-.upper-section .section-content {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
 
 /* Middle Section *****************************************************************************************************/
 .middle-section .transactions-toggle {
@@ -84,6 +79,15 @@ body, html {
   justify-content: space-between;
   border-bottom: 1px dotted;
 }
+.middle-section .transactions-body .transactions-list .transaction-group .transaction .transaction-amount {
+  display: flex;
+}
+.middle-section .transactions-body .transactions-list .transaction-group .transaction .transaction-amount:hover .edit-field {
+  display: block !important;
+}
+.middle-section .transactions-body .transactions-list .transaction-group .transaction .transaction-amount .multiplier-symbol {
+  margin: 0 0.25em;
+}
 .middle-section .transaction-controls {
   display: flex;
   flex-direction: row-reverse;
@@ -93,7 +97,6 @@ body, html {
   font-size: 0.7em;
   margin-right: 0.75em;
 }
-
 /* Lower Section ******************************************************************************************************/
 .lower-section {
   display: flex;
@@ -186,8 +189,14 @@ body, html {
   display: none !important;
 }
 
-.component, .upper-section .stats-section, .lower-section .predictions-table table {
+.component, .middle-section .stats-section, .lower-section .predictions-table table {
   margin: 0.5em auto;
+}
+
+.section-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .component .component-title {

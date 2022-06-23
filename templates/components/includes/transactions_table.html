@@ -1,0 +1,53 @@
+{% load app_extras %}
+
+<div class="transactions-list">
+    {% for group, transactions in transaction_groups.items %}
+    <div class="transaction-group">
+        <div class="transaction-group-title">
+            <span class="edit-field"
+                  data-type="text"
+                  data-model="group"
+                  data-label="Group Name"
+                  data-field="name"
+                  data-id="{{ group.id }}"
+                  data-current-value="{{ group.name }}">{{ group.name }}</span>
+
+            {% if forloop.counter == 1 %}
+            <span>Monthly {{ group.get_type_display }}</span>
+            {% endif %}
+        </div>
+
+        {% for transaction in transactions %}
+        <div class="transaction" data-id="{{ transaction.id }}">
+            <div class="transaction-name">
+                <p class="edit-field"
+                   data-type="text"
+                   data-model="monthly_transaction"
+                   data-label="{{ transaction }}"
+                   data-field="name"
+                   data-id="{{ transaction.id }}"
+                   data-current-value="{{ transaction.name }}">{{ transaction }}</p>
+            </div>
+
+            <div class="transaction-amount">
+                <p class="edit-field"
+                   data-type="decimal"
+                   data-model="monthly_transaction"
+                   data-label="{{ transaction }} amount"
+                   data-field="amount"
+                   data-id="{{ transaction.id }}"
+                   data-current-value="{{ transaction.amount }}">{{ transaction.amount|money_format }}</p>
+
+                <p class="edit-field {% if transaction.multiplier == 1 %} hidden{% endif %}"
+                   data-type="number"
+                   data-model="monthly_transaction"
+                   data-label="{{ transaction }} multiplier"
+                   data-field="multiplier"
+                   data-id="{{ transaction.id }}"
+                   data-current-value="{{ transaction.multiplier }}"><span class="multiplier-symbol">x</span>{{ transaction.multiplier }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>

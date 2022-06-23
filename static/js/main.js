@@ -116,11 +116,10 @@ jsConfig.editFormSubmitEvent = function(editField) {
     document.querySelector('.edit-field-submit').addEventListener('click', function() {
         let params = {
             'model': editField.dataset.model,
-            'field': editField.dataset.field,
-            'fieldValue': editField.dataset.fieldValue,
-            'transactionType': editField.dataset.transactionType,
             'id': editField.dataset.id,
-            'newValue': document.querySelector('.edit-field-value').value
+            'field': editField.dataset.field,
+            'newValue': document.querySelector('.edit-field-value').value,
+            'fieldValue': editField.dataset.fieldValue
         };
         fetchWrapper(jsConfig.updateEditFieldsUrl, 'post', params, function(data) {
             if (data.success === true) {

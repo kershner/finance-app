@@ -1,0 +1,12 @@
+<div class="transactions-body {% if user.collapse_transactions %}hidden{% endif %}">
+    <!-- Income -->
+    {% include 'components/includes/transactions_table.html' with transaction_groups=user.get_income_by_group %}
+
+    <!-- Expenses -->
+    {% include 'components/includes/transactions_table.html' with transaction_groups=user.get_expenses_by_group %}
+
+    <div class="transaction-controls">
+        <div class="add-transaction-btn" data-type="ex">+ Add Expense</div>
+        <div class="add-transaction-btn" data-type="in">+ Add Income</div>
+    </div>
+</div>

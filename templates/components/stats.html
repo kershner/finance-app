@@ -4,19 +4,13 @@
     <div class="stats-section">
         <div class="section-content">
             <div class="value-with-label">
-                <p>{{ user.get_income_calculations.total_monthly_expenses|money_format }}</p>
-                <p>Total Monthly Expenses</p>
+                <p>{{ user.get_income_calculations.total_monthly_income|money_format }}</p>
+                <p>Total Monthly Income</p>
             </div>
 
             <div class="value-with-label">
-                <p class="edit-field"
-                  data-type="decimal"
-                  data-model="user"
-                  data-label="Total Monthly Income"
-                  data-field="income_one_month"
-                  data-id="{{ user.id }}"
-                  data-current-value="{{ user.income_one_month }}">{{ user.income_one_month|money_format }}</p>
-                <p>Total Monthly Income</p>
+                <p>{{ user.get_income_calculations.total_monthly_expenses|money_format }}</p>
+                <p>Total Monthly Expenses</p>
             </div>
 
             <div class="value-with-label">

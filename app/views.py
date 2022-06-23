@@ -84,7 +84,7 @@ class UpdateCollapseSetting(BasePostResponse):
             return self.incomplete_payload_response(e)
 
         user = get_user()
-        user.collapse_expenses = collapse
+        user.collapse_transactions = collapse
         user.save()
 
         return self.success_response()

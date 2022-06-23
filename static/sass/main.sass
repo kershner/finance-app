@@ -40,16 +40,6 @@ body, html
 .upper-section
   .admin-edit-link
     font-size: 0.6em
-
-  .stats-section
-    @extend %component-margins
-
-  .section-content
-    display: flex
-    flex-wrap: wrap
-    justify-content: center
-
-
 /* Middle Section *****************************************************************************************************/
 .middle-section
   .transactions-toggle
@@ -92,6 +82,15 @@ body, html
           p
             @extend %no-padding-margin
 
+          .transaction-amount
+            display: flex
+            &:hover
+              .edit-field
+                display: block !important
+
+            .multiplier-symbol
+              margin: 0 .25em
+
   .transaction-controls
     display: flex
     flex-direction: row-reverse
@@ -101,6 +100,9 @@ body, html
       @extend button
       font-size: 0.7em
       margin-right: 0.75em
+
+  .stats-section
+    @extend %component-margins
 
 /* Lower Section ******************************************************************************************************/
 .lower-section
@@ -194,6 +196,11 @@ body, html
 
 %component-margins
   margin: .5em auto
+
+.section-content
+    display: flex
+    flex-wrap: wrap
+    justify-content: center
 
 .component
   @extend %component-margins
