@@ -4,24 +4,36 @@ body, html {
 }
 
 a {
-  color: #9400d3;
+  color: white;
 }
 
-button {
+button, .edit-field-form input,
+.edit-field-form button,
+.edit-field-form .middle-section .expenses-wrapper .expense-controls div,
+.middle-section .expenses-wrapper .expense-controls .edit-field-form div, .middle-section .expenses-wrapper .expense-controls div {
   cursor: pointer;
-  background-color: #9400d3;
-  color: white;
   padding: 0.375rem 0.75rem;
   font-weight: 400;
   border: 1px solid #ced4da;
   border-radius: 0.375rem;
+  background-color: white;
 }
-button:hover {
-  background-color: #7000a0;
+button.active, .edit-field-form input.active,
+.edit-field-form .middle-section .expenses-wrapper .expense-controls div.active,
+.middle-section .expenses-wrapper .expense-controls .edit-field-form div.active, .middle-section .expenses-wrapper .expense-controls div.active, button:hover:not(input), .edit-field-form input:hover:not(input),
+.edit-field-form .middle-section .expenses-wrapper .expense-controls div:hover:not(input),
+.middle-section .expenses-wrapper .expense-controls .edit-field-form div:hover:not(input), .middle-section .expenses-wrapper .expense-controls div:hover:not(input) {
+  background-color: #9400d3;
+  color: white;
 }
 
 body, html {
   color: #525252;
+}
+@media (min-width: 780px) {
+  body, html {
+    padding: 0 1em !important;
+  }
 }
 
 /* Upper Section ******************************************************************************************************/
@@ -42,7 +54,6 @@ body, html {
   cursor: pointer;
   text-decoration: underline;
   font-weight: 100;
-  color: #9400d3;
   font-size: 0.6em;
 }
 .middle-section .expenses-wrapper .expenses-toggle:hover {
@@ -67,6 +78,15 @@ body, html {
   justify-content: space-between;
   border-bottom: 1px dotted;
 }
+.middle-section .expenses-wrapper .expense-controls {
+  display: flex;
+  flex-direction: row-reverse;
+}
+.middle-section .expenses-wrapper .expense-controls div {
+  font-size: 0.7em;
+  margin-right: 0.25em;
+}
+
 /* Lower Section ******************************************************************************************************/
 .lower-section {
   display: flex;
@@ -84,6 +104,7 @@ body, html {
 }
 .lower-section .predictions-table .years-to-project-form a {
   text-decoration: none;
+  color: #525252;
 }
 .lower-section .predictions-table .years-to-project-form .years-to-project-control {
   font-size: 1em;
@@ -98,7 +119,7 @@ body, html {
 }
 .lower-section .predictions-table .years-to-project-form .years-to-project-value {
   margin: 0 0.5em;
-  font-size: 1.4em;
+  font-size: 1.5em;
   line-height: 1.5em;
 }
 .lower-section .predictions-table table {
@@ -107,7 +128,7 @@ body, html {
 }
 @media (min-width: 780px) {
   .lower-section .predictions-table table {
-    width: 60%;
+    width: 70%;
   }
 }
 .lower-section .predictions-table table th, .lower-section .predictions-table table td {
@@ -118,11 +139,23 @@ body, html {
   text-align: left;
   border-bottom: 3px solid #ced4da;
 }
+.lower-section .predictions-table table .prediction-row:hover {
+  background-color: #9400d3 !important;
+  color: white;
+}
 .lower-section .predictions-table table .prediction-row.striped {
   background-color: #fafafb;
 }
 
 /* Utility stuff ******************************************************************************************************/
+.edit-field-active, .edit-field:hover, .component .component-title, .value-with-label p:first-child {
+  text-shadow: rgba(0, 0, 0, 0.1) 0 0.5px 0.5px;
+}
+
+.component .component-title {
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.15);
+}
+
 .value-with-label {
   display: flex;
   flex-direction: column;
@@ -151,16 +184,35 @@ body, html {
 }
 
 .component .component-title {
+  margin: 0 auto;
+  padding: 0.2em 0;
   text-align: center;
-  font-size: 1.5em;
+  font-size: 1.25em;
+  color: white !important;
+  background: #9400d3;
+}
+@media (min-width: 780px) {
+  .component .component-title {
+    max-width: 30em;
+    border-radius: 0.3em;
+  }
 }
 
 .edit-field {
   cursor: pointer;
 }
 .edit-field-active, .edit-field:hover {
-  color: #9400d3;
+  color: white;
   text-decoration: underline;
+  background-color: #9400d3;
+}
+
+.form-row select,
+.form-row input, .add-expense-form, .edit-field-form {
+  padding: 0.25em 0.5em;
+  background-color: white;
+  border-radius: 0.25em;
+  border: 1px solid #ced4da;
 }
 
 .edit-field-form {
@@ -168,19 +220,40 @@ body, html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0.25em 0.5em;
-  background-color: white;
-  border-radius: 0.25em;
-  border: 1px solid #ced4da;
 }
 .edit-field-form label {
   font-size: 1.2em;
   color: #9400d3;
 }
 .edit-field-form input,
-.edit-field-form button {
+.edit-field-form button,
+.edit-field-form .middle-section .expenses-wrapper .expense-controls div,
+.middle-section .expenses-wrapper .expense-controls .edit-field-form div,
+.edit-field-form .middle-section .expenses-wrapper .expense-controls div,
+.middle-section .expenses-wrapper .expense-controls .edit-field-form div {
   margin-top: 0.25em;
   max-width: 10em;
+}
+
+.add-expense-form {
+  position: absolute;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  margin: 0.25em auto;
+}
+.form-row label {
+  margin-bottom: 0.25em;
+  font-size: 0.8em;
+}
+.form-row select,
+.form-row input {
+  padding: 0.5em 0.25em;
+}
+.form-row select {
+  cursor: pointer;
 }
 
 /*# sourceMappingURL=main.css.map */

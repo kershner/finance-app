@@ -1,3 +1,5 @@
+{% load app_extras %}
+
 <div class="component">
     <div class="component-title">
         Fuzzy Net Income Calculations
@@ -7,7 +9,7 @@
     <div class="years-to-project-form">
         <a href="/?years={{ years_to_project|add:-1 }}" class="years-to-project-control"><</a>
         <div class="years-to-project-value">
-            {{ years_to_project }} year{% if years_to_project != 1 %}s{% endif %} from today
+            {{ years_to_project }} year{% if years_to_project != 1 %}s{% endif %}
         </div>
         <a href="/?years={{ years_to_project|add:1 }}" class="years-to-project-control">></a>
     </div>
@@ -15,20 +17,22 @@
     <!-- Net income predictions table -->
     <table>
         <tr class="predictions-headers">
-            <th>Months</th>
+            <th>Time From Now</th>
             <th>Date</th>
             <th>Age</th>
-            <th>Total</th>
+            <th>New Total</th>
+            <th>Investment</th>
             <th>Net Income</th>
         </tr>
 
         {% for row in net_income_calculations %}
         <tr class="prediction-row {% if forloop.counter|divisibleby:2 %}striped{% endif %}">
-            <td>{{ row.num_months }} month{% if row.num_months != 1 %}s{% endif %}</td>
+            <td>{{ row.time_from_now }}</td>
             <td>{{ row.date_string }}</td>
             <td>{{ row.new_age }}</td>
-            <td>{{ row.new_total }}</td>
-            <td>{{ row.net_income }}</td>
+            <td>{{ row.new_total|money_format }}</td>
+            <td>{{ row.investment|money_format }}</td>
+            <td>{{ row.net_income|money_format }}</td>
         </tr>
         {% endfor %}
     </table>

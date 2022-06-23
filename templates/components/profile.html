@@ -1,4 +1,4 @@
-{% load djmoney %}
+{% load app_extras %}
 
 <div class="component">
     <div class="profile-section">
@@ -38,12 +38,12 @@
 
             <div class="value-with-label">
                 <p class="edit-field"
-                   data-type="number"
+                   data-type="decimal"
                    data-model="user"
                    data-label="Starting Value"
                    data-field="starting_value"
                    data-id="{{ user.id }}"
-                   data-current-value="{{ user.starting_value }}">{% money_localize user.starting_value %}</p>
+                   data-current-value="{{ user.starting_value }}">{{ user.starting_value|money_format }}</p>
                 <p>Starting Value</p>
             </div>
         </div>

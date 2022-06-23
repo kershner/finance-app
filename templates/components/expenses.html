@@ -1,8 +1,8 @@
-{% load djmoney %}
+{% load app_extras %}
 
 <!-- Expenses -->
 <div class="component expenses-wrapper">
-    <div class="component-title">Expenses <span class="expenses-toggle">{% if request.user.collapse_expenses %}Expand{% else %}Collapse{% endif %}</span></div>
+    <div class="component-title">Expenses <a class="expenses-toggle">{% if request.user.collapse_expenses %}Expand{% else %}Collapse{% endif %}</a></div>
 
     <div class="expenses-list {% if request.user.collapse_expenses %}hidden{% endif %}">
         {% with expense_groups=user.get_expenses_by_group %}
@@ -32,16 +32,20 @@
                        data-id="{{ expense.id }}"
                        data-current-value="{{ expense.name }}">{{ expense }}</p>
                     <p class="edit-field"
-                       data-type="number"
+                       data-type="decimal"
                        data-model="expense"
                        data-label="{{ expense }} amount"
                        data-field="amount"
                        data-id="{{ expense.id }}"
-                       data-current-value="{{ expense.amount }}">{% money_localize expense.amount %}</p>
+                       data-current-value="{{ expense.amount }}">{{ expense.amount|money_format }}</p>
                 </div>
                 {% endfor %}
             </div>
         {% endfor %}
         {% endwith %}
+
+        <div class="expense-controls">
+            <div id="add-expense-btn">+ Add Expense</div>
+        </div>
     </div>
 </div>

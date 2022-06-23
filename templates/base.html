@@ -28,6 +28,13 @@
         jsConfig.useColors = {{ request.user.use_colors|yesno:'true,false' }};
         jsConfig.updateEditFieldsUrl = '{% url 'update-edit-fields' %}';
         jsConfig.updateCollapseSettingUrl = '{% url 'update-collapse-setting' %}';
+        jsConfig.addExpenseUrl = '{% url 'add-expense' %}';
+        jsConfig.groupOptions = {
+            {% for group in expense_groups %}
+                '{{ group.name }}': '{{ group.name}}',
+            {% endfor %}
+            'add': 'Add new Group'
+        };
         jsConfig.init();
     </script>
 </body>

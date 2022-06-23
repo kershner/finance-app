@@ -14,24 +14,27 @@ $small-breakpoint: 780px
 
 // Universal stuff
 a
-  color: $purple
+  color: white
 
 button
   cursor: pointer
-  background-color: $purple
-  color: white
   padding: 0.375rem 0.75rem
   font-weight: 400
   border: 1px solid $grey
   border-radius: 0.375rem
+  background-color: white
 
-  &:hover
-    background-color: darken($purple, 10%)
+  &.active,
+  &:hover:not(input)
+    background-color: $purple
+    color: white
 
 body, html
   @extend %no-padding-margin
   @extend %main-font
   color: $black
+  @media (min-width: $small-breakpoint)
+    padding: 0 1em !important
 
 /* Upper Section ******************************************************************************************************/
 .upper-section
@@ -56,7 +59,6 @@ body, html
       cursor: pointer
       text-decoration: underline
       font-weight: 100
-      color: $purple
       font-size: 0.6em
 
       &:hover
@@ -84,6 +86,15 @@ body, html
           p
             @extend %no-padding-margin
 
+    .expense-controls
+      display: flex
+      flex-direction: row-reverse
+
+      div
+        @extend button
+        font-size: 0.7em
+        margin-right: 0.25em
+
 /* Lower Section ******************************************************************************************************/
 .lower-section
   display: flex
@@ -101,6 +112,7 @@ body, html
 
       a
         text-decoration: none
+        color: $black
 
       .years-to-project-control
         font-size: 1em
@@ -115,7 +127,7 @@ body, html
 
       .years-to-project-value
         margin: 0 .5em
-        font-size: 1.4em
+        font-size: 1.5em
         line-height: 1.5em
 
     table
@@ -124,7 +136,7 @@ body, html
       width: 100%
 
       @media(min-width: $small-breakpoint)
-        width: 60%
+        width: 70%
 
       th, td
         padding: .5em
@@ -136,10 +148,20 @@ body, html
           border-bottom: 3px solid $grey
 
       .prediction-row
+        &:hover
+          background-color: $purple !important
+          color: white
+
         &.striped
           background-color: lighten($grey, 15%)
 
 /* Utility stuff ******************************************************************************************************/
+%text-shadow
+  text-shadow: rgba(0, 0, 0, 0.1) 0 0.5px 0.5px
+
+%box-shadow
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.15)
+
 // Value with label
 .value-with-label
   display: flex
@@ -154,6 +176,7 @@ body, html
 
     &:first-child
       font-size: 1.75em
+      @extend %text-shadow
 
 %no-padding-margin
   padding: 0
@@ -170,8 +193,17 @@ body, html
 
   .component-title
     @extend %no-padding-margin
+    @extend %text-shadow
+    @extend %box-shadow
+    margin: 0 auto
+    padding: .2em 0
     text-align: center
-    font-size: 1.5em
+    font-size: 1.25em
+    color: white !important
+    background: $purple
+    @media (min-width: $small-breakpoint)
+      max-width: 30em
+      border-radius: 0.3em
 
 .edit-field
   cursor: pointer
@@ -179,23 +211,48 @@ body, html
     @extend .edit-field-active
 
 .edit-field-active
-  color: $purple
+  @extend %text-shadow
+  color: white
   text-decoration: underline
+  background-color: $purple
+
+%generic-card-styling
+  padding: .25em .5em
+  background-color: white
+  border-radius: .25em
+  border: 1px solid $grey
 
 .edit-field-form
   position: absolute
   display: flex
   flex-direction: column
   align-items: center
-  padding: .25em .5em
-  background-color: white
-  border-radius: .25em
-  border: 1px solid $grey
+  @extend %generic-card-styling
 
   label
     font-size: 1.2em
     color: $purple
   input,
   button
+    @extend button
     margin-top: .25em
     max-width: 10em
+
+
+.add-expense-form
+  position: absolute
+  @extend %generic-card-styling
+
+.form-row
+  display: flex
+  flex-direction: column
+  margin: .25em auto
+  label
+    margin-bottom: .25em
+    font-size: 0.8em
+  select,
+  input
+    padding: 0.5em 0.25em
+    @extend %generic-card-styling
+  select
+    cursor: pointer

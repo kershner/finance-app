@@ -80,10 +80,17 @@ class UpdateEditFieldsView(View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class UpdateCollapseSetting(View):
+class BaseResponse(View):
     def get(self):
         return JsonResponse({}, status=405)
 
+    def post(self, request):
+        user = request.user
+        if not user:
+            return JsonResponse({'success': False, 'message': 'Please log in'}, status=403)
+
+
+class UpdateCollapseSetting(BaseResponse):
     def post(self, request):
         try:
             body = json.loads(request.body)
@@ -91,11 +98,25 @@ class UpdateCollapseSetting(View):
         except KeyError as e:
             return JsonResponse({'success': False, 'message': 'Incomplete payload, missing: {}'.format(e)}, status=500)
 
-        user = request.user
-        if not user:
-            return JsonResponse({'success': False, 'message': 'Please log in'}, status=403)
-
-        user.collapse_expenses = collapse
-        user.save()
+        request.user.collapse_expenses = collapse
+        request.user.save()
 
         return JsonResponse({'success': True})
+
+
+class AddExpenseView(BaseResponse):
+    def post(self, request):
+        new_expense_name = request.POST.get('new-expense-name')
+        new_expense_amount = request.POST.get('new-expense-amount')
+        expense_group_name = request.POST.get('expense-group-name')
+
+        group, created = ExpenseGroup.objects.get_or_create(name=expense_group_name)
+        Expense.objects.get_or_create(
+            user=request.user,
+            name=new_expense_name,
+            amount=new_expense_amount,
+            group=group
+        )
+
+        # Todo alert
+        return HomeView().get(request)
