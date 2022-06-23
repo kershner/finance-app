@@ -8,3 +8,11 @@ def get_parameters():
     with open(base_dir + '/parameters.json') as f:
         params = json.load(f)
         return params
+
+
+def get_user():
+    from .models import CustomUser
+    try:
+        return CustomUser.objects.get(id=1)
+    except CustomUser.DoesNotExist:
+        return None

@@ -2,9 +2,10 @@ let jsConfig = {
     'useColors': undefined,
     'updateEditFieldsUrl': '',
     'updateCollapseSettingUrl': '',
-    'addExpenseUrl': '',
+    'addTransactionUrl': '',
     'newGroupInputAdded': false,
-    'groupOptions': {}
+    'expenseGroupOptions': {},
+    'incomeGroupOptions': {}
 };
 
 jsConfig.init = function() {
@@ -12,9 +13,9 @@ jsConfig.init = function() {
         jsConfig.colorElements();
     }
 
-    jsConfig.expandCollapseExpenses();
+    jsConfig.expandCollapseTransactions();
     jsConfig.addEditFieldClickEvent();
-    jsConfig.addExpenseClickEvent();
+    jsConfig.addTransactionClickEvent();
 };
 
 jsConfig.colorElements = function() {
@@ -39,24 +40,24 @@ jsConfig.colorElements = function() {
     });
 };
 
-// Expand/Collapse for the Expenses list
-jsConfig.expandCollapseExpenses = function() {
-    let expensesToggle = document.querySelectorAll('.expenses-toggle')[0];
-    let expensesList = document.querySelectorAll('.expenses-list')[0];
+// Expand/Collapse for the Transaction lists
+jsConfig.expandCollapseTransactions = function() {
+    let transactionsToggle = document.querySelector('.transactions-toggle');
+    let transactionsBody = document.querySelector('.transactions-body');
 
-    expensesToggle.addEventListener('click', function(e) {
+    transactionsToggle.addEventListener('click', function(e) {
         let params = {
             'collapse': undefined
         };
 
-        if (hasClass(expensesList, 'hidden')) {
+        if (hasClass(transactionsBody, 'hidden')) {
             params.collapse = 0;
-            removeClass(expensesList, 'hidden');
-            expensesToggle.innerHTML = 'Collapse';
+            removeClass(transactionsBody, 'hidden');
+            transactionsToggle.innerHTML = 'Collapse';
         } else {
             params.collapse = 1;
-            addClass(expensesList, 'hidden');
-            expensesToggle.innerHTML = 'Expand';
+            addClass(transactionsBody, 'hidden');
+            transactionsToggle.innerHTML = 'Expand';
         }
 
         // Async fetch call to update user model setting
@@ -117,6 +118,7 @@ jsConfig.editFormSubmitEvent = function(editField) {
             'model': editField.dataset.model,
             'field': editField.dataset.field,
             'fieldValue': editField.dataset.fieldValue,
+            'transactionType': editField.dataset.transactionType,
             'id': editField.dataset.id,
             'newValue': document.querySelector('.edit-field-value').value
         };
@@ -140,44 +142,58 @@ jsConfig.editFormTeardown = function() {
     });
 };
 
-// Add expense functionality
-jsConfig.addExpenseClickEvent = function() {
-    document.querySelector('#add-expense-btn').addEventListener('click', function(e) {
-        let addExpenseBtn = e.target;
+// Add transaction functionality
+jsConfig.addTransactionClickEvent = function () {
+    document.querySelectorAll('.add-transaction-btn').forEach(function (item) {
+        item.addEventListener('click', function (e) {
+            let addTransactionBtn = e.target;
+            let transactionType = e.target.dataset.type;
 
-        if (hasClass(addExpenseBtn, 'active')) {
-            jsConfig.addExpenseFormTeardown();
-            return;
-        }
+            if (hasClass(addTransactionBtn, 'active')) {
+                jsConfig.addTransactionFormTeardown();
+                return;
+            }
 
-        addClass(addExpenseBtn, 'active');
-        jsConfig.appendAddExpenseForm(addExpenseBtn);
+            jsConfig.addTransactionFormTeardown();
+
+            addClass(addTransactionBtn, 'active');
+            jsConfig.appendAddTransactionForm(addTransactionBtn, transactionType);
+        });
     });
 };
 
-// Create/append form to add expense / group
-jsConfig.appendAddExpenseForm = function(addExpenseBtn) {
-    let top = `${addExpenseBtn.offsetTop + addExpenseBtn.offsetHeight}px`;
-    let left = `${addExpenseBtn.offsetLeft}px`;
+// Create/append form to add transaction / group
+jsConfig.appendAddTransactionForm = function(addTransactionBtn, transactionType) {
+    let top = `${addTransactionBtn.offsetTop + addTransactionBtn.offsetHeight}px`;
+    let left = `${addTransactionBtn.offsetLeft}px`;
     let styleString = `style="top: ${top}; left: ${left};"`;
+    let transactionTypeDisplay = jsConfig.getTransactionTypeDisplay(transactionType);
+    let groupOptions = transactionType == 'ex' ? jsConfig.expenseGroupOptions : jsConfig.incomeGroupOptions;
     let formTemplateDiv = jsConfig.getNewDivElement(`
-        <form action="${jsConfig.addExpenseUrl}" method="post" class="add-expense-form" ${styleString}>
-            ${jsConfig.getAddExpenseFormRow({
-                'name': 'expense-group-name',
-                'label': 'Group',
-                'selectOptions': jsConfig.groupOptions
+        <form action="${jsConfig.addTransactionUrl}" method="post" class="add-transaction-form" ${styleString}>
+            ${jsConfig.getAddTransactionFormRow({
+                'name': 'transaction-group-name',
+                'label': `${transactionTypeDisplay} Group`,
+                'selectOptions': groupOptions
             })}
 
-            ${jsConfig.getAddExpenseFormRow({
-                'name': 'new-expense-name',
-                'label': 'Expense Name',
+            ${jsConfig.getAddTransactionFormRow({
+                'name': 'new-transaction-type',
+                'type': 'text',
+                'value': transactionType,
+                'hidden': true
+            })}
+
+            ${jsConfig.getAddTransactionFormRow({
+                'name': 'new-transaction-name',
+                'label': `${transactionTypeDisplay} Name`,
                 'type': 'text',
                 'placeholder': 'ex. pizza'
             })}
 
-            ${jsConfig.getAddExpenseFormRow({
-                'name': 'new-expense-amount',
-                'label': 'Expense Amount',
+            ${jsConfig.getAddTransactionFormRow({
+                'name': 'new-transaction-amount',
+                'label': `${transactionTypeDisplay} Amount`,
                 'type': 'decimal',
                 'placeholder': '0.0',
                 'min': 1,
@@ -190,19 +206,26 @@ jsConfig.appendAddExpenseForm = function(addExpenseBtn) {
         </form>
     `);
     document.body.appendChild(formTemplateDiv);
-    formTemplateDiv.querySelector('input[name="new-expense-name"]').focus();
+    formTemplateDiv.querySelector('input[name="new-transaction-name"]').focus();
 
-    jsConfig.addNewGroupClickEvent(formTemplateDiv);
+    jsConfig.addNewGroupClickEvent(formTemplateDiv, transactionType);
 };
 
-jsConfig.addNewGroupClickEvent = function(formTemplateDiv) {
+jsConfig.addNewGroupClickEvent = function(formTemplateDiv, transactionType) {
     let groupSelect = formTemplateDiv.querySelector('select');
-    let inputName = 'expense-group-name';
+    let inputName = 'transaction-group-name';
 
     groupSelect.addEventListener('change', function() {
         if (this.value === 'add' && !jsConfig.newGroupInputAdded) {
             let groupNameDiv = jsConfig.getNewDivElement(`
-                ${jsConfig.getAddExpenseFormRow({
+                ${jsConfig.getAddTransactionFormRow({
+                    'name': 'transaction-group-type',
+                    'type': 'text',
+                    'value': transactionType,
+                    'hidden': true
+                })}
+
+                ${jsConfig.getAddTransactionFormRow({
                     'name': inputName,
                     'label': 'New Group Name',
                     'type': 'text',
@@ -227,7 +250,7 @@ jsConfig.getNewDivElement = function(innerHtml) {
     return newDivElement
 };
 
-jsConfig.getAddExpenseFormRow = function(inputAttrs) {
+jsConfig.getAddTransactionFormRow = function(inputAttrs) {
     let selectHtml = undefined;
     let inputHtml = undefined;
 
@@ -240,6 +263,7 @@ jsConfig.getAddExpenseFormRow = function(inputAttrs) {
     } else {
         inputHtml = `
             <input
+            class="${inputAttrs.hidden ? 'hidden' : ''}"
             name="${inputAttrs.name}"
             type="${inputAttrs.type}"
             placeholder="${inputAttrs.placeholder ? inputAttrs.placeholder : ''}"
@@ -251,19 +275,27 @@ jsConfig.getAddExpenseFormRow = function(inputAttrs) {
 
     return `
         <div class="form-row">
-            <label for="${inputAttrs.name}">${inputAttrs.label}</label>
+            <label class="${inputAttrs.hidden ? 'hidden' : ''}" for="${inputAttrs.name}">${inputAttrs.label}</label>
             ${selectHtml ? selectHtml : ''}
             ${inputHtml ? inputHtml : ''}
         </div>
     `;
 };
 
-jsConfig.addExpenseFormTeardown = function() {
-    let addExpenseForm = document.querySelector('.add-expense-form');
-    addExpenseForm.remove();
+jsConfig.addTransactionFormTeardown = function() {
+    let addTransactionForms = document.querySelectorAll('.add-transaction-form');
+    addTransactionForms.forEach(function(form) {
+       form.remove();
+    });
 
-    let addExpenseBtn = document.querySelector('#add-expense-btn');
-    removeClass(addExpenseBtn, 'active');
+    let addTransactionBtns = document.querySelectorAll('.add-transaction-btn');
+    addTransactionBtns.forEach(function(btn) {
+      removeClass(btn, 'active');
+    });
 
     jsConfig.newGroupInputAdded = false;
+};
+
+jsConfig.getTransactionTypeDisplay = function(transactionType) {
+    return transactionType === 'in' ? 'Income' : 'Expense';
 };

@@ -52,33 +52,39 @@ body, html
 
 /* Middle Section *****************************************************************************************************/
 .middle-section
-  .expenses-wrapper
+  .transactions-toggle
+    cursor: pointer
+    text-decoration: underline
+    font-weight: 100
+    font-size: 0.6em
+
+    &:hover
+      text-decoration: none !important
+
+  .transactions-wrapper
+    max-width: 40em
+
+  .transactions-body
+    display: flex
+    justify-content: center
+    flex-wrap: wrap
     width: 100%
 
-    .expenses-toggle
-      cursor: pointer
-      text-decoration: underline
-      font-weight: 100
-      font-size: 0.6em
-
-      &:hover
-        text-decoration: none !important
-
-    .expenses-list
-      margin: 0 auto
+    .transactions-list
       padding: 0 1em
-      max-width: 20em
+      width: 18em
+      flex: 1
 
-      .expense-group
+      .transaction-group
         margin: .5em 0
 
-        .expense-group-title
+        .transaction-group-title
           font-weight: bold
           text-align: left
           display: flex
           justify-content: space-between
 
-        .expense
+        .transaction
           display: flex
           justify-content: space-between
           border-bottom: 1px dotted
@@ -86,14 +92,15 @@ body, html
           p
             @extend %no-padding-margin
 
-    .expense-controls
-      display: flex
-      flex-direction: row-reverse
+  .transaction-controls
+    display: flex
+    flex-direction: row-reverse
+    width: 100%
 
-      div
-        @extend button
-        font-size: 0.7em
-        margin-right: 0.25em
+    div
+      @extend button
+      font-size: 0.7em
+      margin-right: 0.75em
 
 /* Lower Section ******************************************************************************************************/
 .lower-section
@@ -238,8 +245,7 @@ body, html
     margin-top: .25em
     max-width: 10em
 
-
-.add-expense-form
+.add-transaction-form
   position: absolute
   @extend %generic-card-styling
 

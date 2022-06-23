@@ -1,28 +1,27 @@
+from .models import CustomUser, MonthlyTransaction, Group
 from django.template.response import TemplateResponse
-from .models import CustomUser, Expense, ExpenseGroup
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.views import View
+from .util import get_user
 import json
 
 
 class HomeView(View):
     @staticmethod
-    def get_user():
-        try:
-            return CustomUser.objects.get(id=1)
-        except CustomUser.DoesNotExist:
-            return None
-
-    def get(self, request):
+    def get(request):
+        min_years = 1
+        max_years = 99
         years = int(request.GET.get('years', 1))
+        years = int(years if min_years <= years <= max_years else min_years)
         ctx = {
-            'years_to_project': int(years if years > 0 else 1),
-            'expense_groups': ExpenseGroup.objects.all(),
+            'years_to_project': years,
+            'income_groups': Group.objects.filter(type='in').all(),
+            'expense_groups': Group.objects.filter(type='ex').all(),
         }
 
-        user = self.get_user()
+        user = get_user()
         if user:
             ctx.update({
                 'user': user,
@@ -49,8 +48,8 @@ class BasePostResponse(View):
 class UpdateEditFieldsView(BasePostResponse):
     post_values_model_mapping = {
         'user': CustomUser,
-        'expense': Expense,
-        'expense_group': ExpenseGroup
+        'monthly_transaction': MonthlyTransaction,
+        'group': Group
     }
 
     def post(self, request):
@@ -84,24 +83,28 @@ class UpdateCollapseSetting(BasePostResponse):
         except KeyError as e:
             return self.incomplete_payload_response(e)
 
-        request.user.collapse_expenses = collapse
-        request.user.save()
+        user = get_user()
+        user.collapse_expenses = collapse
+        user.save()
 
         return self.success_response()
 
 
-class AddExpenseView(BasePostResponse):
+class AddTransactionView(BasePostResponse):
     @staticmethod
     def post(request):
-        new_expense_name = request.POST.get('new-expense-name')
-        new_expense_amount = request.POST.get('new-expense-amount')
-        expense_group_name = request.POST.get('expense-group-name')
+        new_transaction_type = request.POST.get('new-transaction-type')
+        new_transaction_name = request.POST.get('new-transaction-name')
+        new_transaction_amount = request.POST.get('new-transaction-amount')
+        group_name = request.POST.get('transaction-group-name')
+        group_type = request.POST.get('transaction-group-type')
 
-        group, created = ExpenseGroup.objects.get_or_create(name=expense_group_name)
-        Expense.objects.get_or_create(
+        group, created = Group.objects.get_or_create(name=group_name, type=group_type)
+        MonthlyTransaction.objects.get_or_create(
             user=request.user,
-            name=new_expense_name,
-            amount=new_expense_amount,
+            type=new_transaction_type,
+            name=new_transaction_name,
+            amount=new_transaction_amount,
             group=group
         )
 

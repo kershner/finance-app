@@ -1,3 +1,18 @@
 <div class="middle-section">
-    {% include 'components/expenses.html' %}
+    <div class="component transactions-wrapper">
+        <div class="component-title">Income / Expenses <a class="transactions-toggle">{% if request.user.collapse_expenses %}Expand{% else %}Collapse{% endif %}</a></div>
+
+        <div class="transactions-body {% if request.user.collapse_expenses %}hidden{% endif %}">
+            <!-- Income -->
+            {% include 'components/transactions_table.html' with transaction_groups=user.get_income_by_group %}
+
+            <!-- Expenses -->
+            {% include 'components/transactions_table.html' with transaction_groups=user.get_expenses_by_group %}
+
+            <div class="transaction-controls">
+                <div class="add-transaction-btn" data-type="ex">+ Add Expense</div>
+                <div class="add-transaction-btn" data-type="in">+ Add Income</div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -28,12 +28,18 @@
         jsConfig.useColors = {{ request.user.use_colors|yesno:'true,false' }};
         jsConfig.updateEditFieldsUrl = '{% url 'update-edit-fields' %}';
         jsConfig.updateCollapseSettingUrl = '{% url 'update-collapse-setting' %}';
-        jsConfig.addExpenseUrl = '{% url 'add-expense' %}';
-        jsConfig.groupOptions = {
+        jsConfig.addTransactionUrl = '{% url 'add-transaction' %}';
+        jsConfig.expenseGroupOptions = {
             {% for group in expense_groups %}
                 '{{ group.name }}': '{{ group.name}}',
             {% endfor %}
-            'add': 'Add new Group'
+            'add': 'Add new Expense Group'
+        };
+        jsConfig.incomeGroupOptions = {
+            {% for group in income_groups %}
+                '{{ group.name }}': '{{ group.name}}',
+            {% endfor %}
+            'add': 'Add new Income Group'
         };
         jsConfig.init();
     </script>

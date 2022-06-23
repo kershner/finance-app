@@ -11,7 +11,6 @@ class CustomUser(AbstractUser):
     starting_value = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
     income_two_weeks = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
     income_one_month = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
-
     collapse_expenses = models.BooleanField(default=False)
     use_colors = models.BooleanField(default=False)
 
@@ -19,23 +18,35 @@ class CustomUser(AbstractUser):
         return math.floor((date.today() - self.birth_date).days / 365)
 
     def get_expenses(self):
-        return Expense.objects.filter(user=self).annotate(total_monthly_expenses=Sum('amount')).order_by('-total_monthly_expenses').all()
+        return MonthlyTransaction.objects.filter(user=self, type='ex').annotate(total_monthly_expenses=Sum('amount')).order_by('-total_monthly_expenses').all()
+
+    def get_income(self):
+        return MonthlyTransaction.objects.filter(user=self, type='in').annotate(total_monthly_income=Sum('amount')).order_by('-total_monthly_income').all()
 
     def get_investments(self):
-        return self.get_expenses().filter(group__name='Investment').all()
+        return self.get_expenses().filter(group__type='ex', group__name='Investment').all()
+
+    def get_transactions_by_group(self, transaction_type):
+        transactions_grouped = {}
+
+        transactions = self.get_income()
+        if transaction_type == 'ex':
+            transactions = self.get_expenses()
+
+        for transaction in transactions:
+            group = transaction.group
+            if group not in transactions_grouped:
+                transactions_grouped[group] = [transaction]
+            else:
+                transactions_grouped[group].append(transaction)
+
+        return transactions_grouped
+
+    def get_income_by_group(self):
+        return self.get_transactions_by_group('in')
 
     def get_expenses_by_group(self):
-        expenses_grouped = {}
-        expenses = self.get_expenses()
-
-        for expense in expenses:
-            group = expense.group
-            if group not in expenses_grouped:
-                expenses_grouped[group] = [expense]
-            else:
-                expenses_grouped[group].append(expense)
-
-        return expenses_grouped
+        return self.get_transactions_by_group('ex')
 
     def get_income_calculations(self):
         total_monthly_income = self.income_one_month
@@ -87,18 +98,25 @@ class CustomUser(AbstractUser):
 
         return net_income_calculations
 
+TRANSACTION_TYPES = [
+    ('ex', 'Expense'),
+    ('in', 'Income'),
+]
 
-class ExpenseGroup(models.Model):
+
+class Group(models.Model):
+    type = models.CharField(max_length=2, choices=TRANSACTION_TYPES, default='ex')
     name = models.CharField(null=False, blank=False, max_length=100)
 
     def __str__(self):
         return '{}'.format(self.name)
 
 
-class Expense(models.Model):
+class MonthlyTransaction(models.Model):
+    type = models.CharField(max_length=2, choices=TRANSACTION_TYPES, default='ex')
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, blank=True, null=True)
     name = models.CharField(null=False, blank=False, max_length=100)
-    group = models.ForeignKey(ExpenseGroup, on_delete=models.SET_NULL, blank=True, null=True)
+    group = models.ForeignKey(Group, on_delete=models.SET_NULL, blank=True, null=True)
     amount = models.DecimalField(max_digits=14, decimal_places=2)
     multiplier = models.IntegerField(default=1)
 

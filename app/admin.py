@@ -1,23 +1,23 @@
-from .models import CustomUser, Expense, ExpenseGroup
+from .models import CustomUser, MonthlyTransaction, Group
 from django.contrib import admin
 
 
-class ExpenseInline(admin.TabularInline):
-    model = Expense
+class MonthlyTransactionInline(admin.TabularInline):
+    model = MonthlyTransaction
     extra = 0
 
 
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
     list_per_page = 100
-    inlines = [ExpenseInline]
+    inlines = [MonthlyTransactionInline]
 
 
-@admin.register(Expense)
-class ExpenseAdmin(admin.ModelAdmin):
+@admin.register(MonthlyTransaction)
+class MonthlyTransactionAdmin(admin.ModelAdmin):
     list_per_page = 100
 
 
-@admin.register(ExpenseGroup)
-class ExpenseGroupAdmin(admin.ModelAdmin):
+@admin.register(Group)
+class GroupAdmin(admin.ModelAdmin):
     list_per_page = 100
