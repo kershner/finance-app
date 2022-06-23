@@ -8,7 +8,8 @@ import json
 
 
 class HomeView(View):
-    def get_user(self):
+    @staticmethod
+    def get_user():
         try:
             return CustomUser.objects.get(id=1)
         except CustomUser.DoesNotExist:
@@ -16,10 +17,8 @@ class HomeView(View):
 
     def get(self, request):
         years = int(request.GET.get('years', 1))
-        years = years if years > 0 else 1
-
         ctx = {
-            'years_to_project': int(years),
+            'years_to_project': int(years if years > 0 else 1),
             'expense_groups': ExpenseGroup.objects.all(),
         }
 
@@ -33,15 +32,26 @@ class HomeView(View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class UpdateEditFieldsView(View):
+class BasePostResponse(View):
+    @staticmethod
+    def get():
+        return JsonResponse({}, status=405)
+
+    @staticmethod
+    def success_response():
+        return JsonResponse({'success': True}, status=200)
+
+    @staticmethod
+    def incomplete_payload_response(e):
+        return JsonResponse({'success': False, 'message': 'Incomplete payload, missing: {}'.format(e)}, status=500)
+
+
+class UpdateEditFieldsView(BasePostResponse):
     post_values_model_mapping = {
         'user': CustomUser,
         'expense': Expense,
         'expense_group': ExpenseGroup
     }
-
-    def get(self):
-        return JsonResponse({}, status=405)
 
     def post(self, request):
         try:
@@ -51,9 +61,7 @@ class UpdateEditFieldsView(View):
             field = body['field']
             new_value = body['newValue']
         except KeyError as e:
-            return JsonResponse({'success': False, 'message': 'Incomplete payload, missing: {}'.format(e)}, status=500)
-
-        return_msg = {'success': True}
+            return self.incomplete_payload_response(e)
 
         try:
             mapped_model = self.post_values_model_mapping[model]
@@ -62,50 +70,29 @@ class UpdateEditFieldsView(View):
 
         if mapped_model:
             model_instance = mapped_model.objects.filter(id=instance_id).first()
-
-            # Can only edit User object if it's same user
-            no_permissions_msg = {'success': False, 'message': 'You do not have permission to edit this field.'}
-            if mapped_model == CustomUser:
-                if model_instance != request.user:
-                    return JsonResponse(no_permissions_msg, status=403)
-            else:
-                # Can only edit other objects if they belong to the user
-                if hasattr(model_instance, 'user') and model_instance.user != request.user:
-                    return JsonResponse(no_permissions_msg, status=403)
-
             setattr(model_instance, field, new_value)
             model_instance.save()
 
-        return JsonResponse(return_msg, status=200)
+        return self.success_response()
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class BaseResponse(View):
-    def get(self):
-        return JsonResponse({}, status=405)
-
-    def post(self, request):
-        user = request.user
-        if not user:
-            return JsonResponse({'success': False, 'message': 'Please log in'}, status=403)
-
-
-class UpdateCollapseSetting(BaseResponse):
+class UpdateCollapseSetting(BasePostResponse):
     def post(self, request):
         try:
             body = json.loads(request.body)
             collapse = bool(body['collapse'])
         except KeyError as e:
-            return JsonResponse({'success': False, 'message': 'Incomplete payload, missing: {}'.format(e)}, status=500)
+            return self.incomplete_payload_response(e)
 
         request.user.collapse_expenses = collapse
         request.user.save()
 
-        return JsonResponse({'success': True})
+        return self.success_response()
 
 
-class AddExpenseView(BaseResponse):
-    def post(self, request):
+class AddExpenseView(BasePostResponse):
+    @staticmethod
+    def post(request):
         new_expense_name = request.POST.get('new-expense-name')
         new_expense_amount = request.POST.get('new-expense-amount')
         expense_group_name = request.POST.get('expense-group-name')
@@ -118,5 +105,5 @@ class AddExpenseView(BaseResponse):
             group=group
         )
 
-        # Todo alert
+        # TODO flash message
         return HomeView().get(request)

@@ -40,12 +40,14 @@ function fetchWrapper(endpoint, method, params, callback) {
         return response.text();
     })
     .then((data) => {
-        console.log(data.body);
         let response = JSON.parse(data);
-        console.log(response);
-        callback(response);
+        if (!response.success ) {
+            alert(response.message);
+        } else {
+            callback(response);
+        }
     })
     .catch(function(ex) {
-        console.log('Parsing Failed: ', ex);
+        console.log(ex);
     });
 }

@@ -102,11 +102,12 @@ jsConfig.addEditFieldForm = function(editField) {
     formTemplateDiv.innerHTML = `
         <div class="edit-field-form" ${styleString}>
             <label for="new-value">${editField.dataset.label}</label>
-            <input class="edit-field-value" name="new-value" type="${editField.dataset.type}" value="${currentValue}">
+            <input class="edit-field-value" name="new-value" type="${editField.dataset.type}" placeholder="${currentValue}">
             <button class="edit-field-submit">Submit</button>
         </div>
     `;
     document.body.appendChild(formTemplateDiv);
+    formTemplateDiv.querySelector('input').focus();
 };
 
 // Form submit event
@@ -189,6 +190,7 @@ jsConfig.appendAddExpenseForm = function(addExpenseBtn) {
         </form>
     `);
     document.body.appendChild(formTemplateDiv);
+    formTemplateDiv.querySelector('input[name="new-expense-name"]').focus();
 
     jsConfig.addNewGroupClickEvent(formTemplateDiv);
 };
