@@ -2,6 +2,7 @@ from .models import CustomUser, MonthlyTransaction, Group
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.views import View
 from .util import get_user
@@ -41,8 +42,11 @@ class BasePostResponse(View):
         return JsonResponse({'success': True}, status=200)
 
     @staticmethod
-    def incomplete_payload_response(e):
-        return JsonResponse({'success': False, 'message': 'Incomplete payload, missing: {}'.format(e)}, status=500)
+    def error_response(msg):
+        return JsonResponse({'success': False, 'message': msg}, status=500)
+
+    def incomplete_payload_response(self, e):
+        return self.error_response('Incomplete payload, missing: {}'.format(e))
 
 
 class UpdateEditFieldsView(BasePostResponse):
@@ -70,7 +74,11 @@ class UpdateEditFieldsView(BasePostResponse):
         if mapped_model:
             model_instance = mapped_model.objects.filter(id=instance_id).first()
             setattr(model_instance, field, new_value)
-            model_instance.save()
+
+            try:
+                model_instance.save()
+            except (ValidationError, ValueError) as e:
+                return self.error_response(e.message if hasattr(e, 'message') else str(e))
 
         return self.success_response()
 
@@ -97,11 +105,10 @@ class AddTransactionView(BasePostResponse):
         new_transaction_name = request.POST.get('new-transaction-name')
         new_transaction_amount = request.POST.get('new-transaction-amount')
         group_name = request.POST.get('transaction-group-name')
-        group_type = request.POST.get('transaction-group-type')
 
-        group, created = Group.objects.get_or_create(name=group_name, type=group_type)
+        group, created = Group.objects.get_or_create(name=group_name, type=new_transaction_type)
         MonthlyTransaction.objects.get_or_create(
-            user=request.user,
+            user=get_user(),
             type=new_transaction_type,
             name=new_transaction_name,
             amount=new_transaction_amount,

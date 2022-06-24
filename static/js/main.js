@@ -101,11 +101,16 @@ jsConfig.addEditFieldForm = function(editField) {
     }
 
     formTemplateDiv.innerHTML = `
-        <div class="edit-field-form" ${styleString}>
+        <form class="edit-field-form" ${styleString}>
             <label for="new-value">${editField.dataset.label}</label>
-            <input class="edit-field-value" name="new-value" type="${editField.dataset.type}" placeholder="${currentValue}">
-            <button class="edit-field-submit">Submit</button>
-        </div>
+            <input
+                class="edit-field-value"
+                name="new-value"
+                type="${editField.dataset.type}"
+                placeholder="${currentValue}"
+                required>
+            <button class="edit-field-submit" type="submit">Submit</button>
+        </form>
     `;
     document.body.appendChild(formTemplateDiv);
     formTemplateDiv.querySelector('input').focus();
@@ -114,18 +119,21 @@ jsConfig.addEditFieldForm = function(editField) {
 // Form submit event
 jsConfig.editFormSubmitEvent = function(editField) {
     document.querySelector('.edit-field-submit').addEventListener('click', function() {
-        let params = {
-            'model': editField.dataset.model,
-            'id': editField.dataset.id,
-            'field': editField.dataset.field,
-            'newValue': document.querySelector('.edit-field-value').value,
-            'fieldValue': editField.dataset.fieldValue
-        };
-        fetchWrapper(jsConfig.updateEditFieldsUrl, 'post', params, function(data) {
-            if (data.success === true) {
-                location.reload();
-            }
-        });
+        let form = document.querySelector('.edit-field-form');
+        if (form.checkValidity()) {
+            let params = {
+                'model': editField.dataset.model,
+                'id': editField.dataset.id,
+                'field': editField.dataset.field,
+                'newValue': document.querySelector('.edit-field-value').value,
+                'fieldValue': editField.dataset.fieldValue
+            };
+            fetchWrapper(jsConfig.updateEditFieldsUrl, 'post', params, function(data) {
+                if (data.success === true) {
+                    location.reload();
+                }
+            });
+        }
     });
 };
 
@@ -195,8 +203,7 @@ jsConfig.appendAddTransactionForm = function(addTransactionBtn, transactionType)
                 'label': `${transactionTypeDisplay} Amount`,
                 'type': 'decimal',
                 'placeholder': '0.0',
-                'min': 1,
-                'value': 0.0
+                'min': 1
             })}
 
             <div class="form-row">
