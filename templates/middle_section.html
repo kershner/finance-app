@@ -1,9 +1,4 @@
 <div class="middle-section">
-    <div class="component transactions-wrapper">
-        <div class="component-title">Income / Expenses <a class="transactions-toggle">{% if user.collapse_transactions %}Expand{% else %}Collapse{% endif %}</a></div>
-
-        {% include 'components/monthly_transactions.html' %}
-    </div>
-
+    {% include 'components/monthly_transactions.html' %}
     {% include 'components/stats.html' %}
 </div>

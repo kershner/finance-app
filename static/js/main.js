@@ -1,7 +1,6 @@
 let jsConfig = {
     'useColors': undefined,
     'updateEditFieldsUrl': '',
-    'updateCollapseSettingUrl': '',
     'addTransactionUrl': '',
     'newGroupInputAdded': false,
     'expenseGroupOptions': {},
@@ -13,7 +12,6 @@ jsConfig.init = function() {
         jsConfig.colorElements();
     }
 
-    jsConfig.expandCollapseTransactions();
     jsConfig.addEditFieldClickEvent();
     jsConfig.addTransactionClickEvent();
 };
@@ -36,33 +34,6 @@ jsConfig.colorElements = function() {
     randomBackgroundColorElements.forEach(element => {
         element.style.backgroundColor = randomColor({
             'luminosity': 'bright'
-        });
-    });
-};
-
-// Expand/Collapse for the Transaction lists
-jsConfig.expandCollapseTransactions = function() {
-    let transactionsToggle = document.querySelector('.transactions-toggle');
-    let transactionsBody = document.querySelector('.transactions-body');
-
-    transactionsToggle.addEventListener('click', function(e) {
-        let params = {
-            'collapse': undefined
-        };
-
-        if (hasClass(transactionsBody, 'hidden')) {
-            params.collapse = 0;
-            removeClass(transactionsBody, 'hidden');
-            transactionsToggle.innerHTML = 'Collapse';
-        } else {
-            params.collapse = 1;
-            addClass(transactionsBody, 'hidden');
-            transactionsToggle.innerHTML = 'Expand';
-        }
-
-        // Async fetch call to update user model setting
-        fetchWrapper(jsConfig.updateCollapseSettingUrl, 'post', params, function(data) {
-            console.log(data);
         });
     });
 };

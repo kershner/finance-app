@@ -1,7 +1,14 @@
 {% load app_extras %}
 
 <div class="transactions-list">
-    {% for group, transactions in transaction_groups.items %}
+    <div class="transaction-list-title">
+        {% if transaction_type == 'in' %}
+            Income
+        {% else %}
+            Expenses
+        {% endif %}
+    </div>
+    {% for group, data in transaction_groups.items %}
     <div class="transaction-group">
         <div class="transaction-group-title">
             <span class="edit-field"
@@ -17,7 +24,7 @@
             {% endif %}
         </div>
 
-        {% for transaction in transactions %}
+        {% for transaction in data.transactions %}
         <div class="transaction" data-id="{{ transaction.id }}">
             <div class="transaction-name">
                 <p class="edit-field"
@@ -48,6 +55,14 @@
             </div>
         </div>
         {% endfor %}
+
+        <!-- Group Total -->
+        <div class="transaction">
+            <div class="transaction-name"></div>
+            <div class="transaction-amount">
+                <p>{{ data.group_total|money_format }}</p>
+            </div>
+        </div>
     </div>
     {% endfor %}
 </div>

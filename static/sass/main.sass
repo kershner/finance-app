@@ -2,6 +2,7 @@
 $black: rgb(82, 82, 82)
 $blue: #0d6efd
 $grey: #ced4da
+$dark-grey: lighten($black, 20)
 $purple: #9400d3
 
 // Fonts
@@ -40,30 +41,28 @@ body, html
 .upper-section
   .admin-edit-link
     font-size: 0.6em
+
 /* Middle Section *****************************************************************************************************/
 .middle-section
-  .transactions-toggle
-    cursor: pointer
-    text-decoration: underline
-    font-weight: 100
-    font-size: 0.6em
-
-    &:hover
-      text-decoration: none !important
-
-  .transactions-wrapper
-    max-width: 40em
-
   .transactions-body
     display: flex
-    justify-content: center
+    margin: 0 auto
     flex-wrap: wrap
-    width: 100%
+    max-width: 40em
 
     .transactions-list
       padding: 0 1em
       width: 18em
       flex: 1
+
+      .transaction-list-title
+        margin-top: 0.5em
+        padding: 0.2em 1em
+        border-radius: .75em
+        background-color: $dark-grey
+        color: white
+        @extend %text-shadow
+        @extend %box-shadow
 
       .transaction-group
         margin: .5em 0
@@ -78,6 +77,13 @@ body, html
           display: flex
           justify-content: space-between
           border-bottom: 1px dotted
+          &:last-child
+            border-bottom: none
+
+            p:last-of-type
+              border-top: 2px solid $dark-grey
+              margin-top: -1px
+              padding: .25em 0
 
           p
             @extend %no-padding-margin
@@ -93,6 +99,7 @@ body, html
 
   .transaction-controls
     display: flex
+    align-items: center
     flex-direction: row-reverse
     width: 100%
 

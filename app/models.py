@@ -10,7 +10,6 @@ import math
 class CustomUser(AbstractUser):
     birth_date = models.DateField(null=True, blank=True)
     starting_value = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
-    collapse_transactions = models.BooleanField(default=False)
     use_colors = models.BooleanField(default=False)
 
     def get_current_age(self):
@@ -33,9 +32,13 @@ class CustomUser(AbstractUser):
         for transaction in transactions:
             group = transaction.group
             if group not in transactions_grouped:
-                transactions_grouped[group] = [transaction]
+                group_total = group.total()  # TODO left off here - calculate sum of group
+                transactions_grouped[group] = {
+                    'transactions': [transaction],
+                    'group_total': group_total
+                }
             else:
-                transactions_grouped[group].append(transaction)
+                transactions_grouped[group]['transactions'].append(transaction)
 
         return transactions_grouped
 
@@ -115,6 +118,14 @@ class Group(models.Model):
 
     def __str__(self):
         return '{}'.format(self.name)
+
+    def total(self):
+        all_transactions = MonthlyTransaction.objects.filter(group=self).annotate(total=Sum(F('multiplier') * F('amount')))
+        total = 0
+        for transaction in all_transactions:
+            total += transaction.total
+
+        return total
 
 
 class MonthlyTransaction(models.Model):

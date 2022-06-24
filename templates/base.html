@@ -27,7 +27,6 @@
     <script type="text/javascript">
         jsConfig.useColors = {{ request.user.use_colors|yesno:'true,false' }};
         jsConfig.updateEditFieldsUrl = '{% url 'update-edit-fields' %}';
-        jsConfig.updateCollapseSettingUrl = '{% url 'update-collapse-setting' %}';
         jsConfig.addTransactionUrl = '{% url 'add-transaction' %}';
         jsConfig.expenseGroupOptions = {
             {% for group in expense_groups %}

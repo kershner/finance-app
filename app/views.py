@@ -83,21 +83,6 @@ class UpdateEditFieldsView(BasePostResponse):
         return self.success_response()
 
 
-class UpdateCollapseSetting(BasePostResponse):
-    def post(self, request):
-        try:
-            body = json.loads(request.body)
-            collapse = bool(body['collapse'])
-        except KeyError as e:
-            return self.incomplete_payload_response(e)
-
-        user = get_user()
-        user.collapse_transactions = collapse
-        user.save()
-
-        return self.success_response()
-
-
 class AddTransactionView(BasePostResponse):
     @staticmethod
     def post(request):

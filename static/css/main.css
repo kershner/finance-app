@@ -42,28 +42,23 @@ body, html {
 }
 
 /* Middle Section *****************************************************************************************************/
-.middle-section .transactions-toggle {
-  cursor: pointer;
-  text-decoration: underline;
-  font-weight: 100;
-  font-size: 0.6em;
-}
-.middle-section .transactions-toggle:hover {
-  text-decoration: none !important;
-}
-.middle-section .transactions-wrapper {
-  max-width: 40em;
-}
 .middle-section .transactions-body {
   display: flex;
-  justify-content: center;
+  margin: 0 auto;
   flex-wrap: wrap;
-  width: 100%;
+  max-width: 40em;
 }
 .middle-section .transactions-body .transactions-list {
   padding: 0 1em;
   width: 18em;
   flex: 1;
+}
+.middle-section .transactions-body .transactions-list .transaction-list-title {
+  margin-top: 0.5em;
+  padding: 0.2em 1em;
+  border-radius: 0.75em;
+  background-color: #858585;
+  color: white;
 }
 .middle-section .transactions-body .transactions-list .transaction-group {
   margin: 0.5em 0;
@@ -79,6 +74,14 @@ body, html {
   justify-content: space-between;
   border-bottom: 1px dotted;
 }
+.middle-section .transactions-body .transactions-list .transaction-group .transaction:last-child {
+  border-bottom: none;
+}
+.middle-section .transactions-body .transactions-list .transaction-group .transaction:last-child p:last-of-type {
+  border-top: 2px solid #858585;
+  margin-top: -1px;
+  padding: 0.25em 0;
+}
 .middle-section .transactions-body .transactions-list .transaction-group .transaction .transaction-amount {
   display: flex;
 }
@@ -90,6 +93,7 @@ body, html {
 }
 .middle-section .transaction-controls {
   display: flex;
+  align-items: center;
   flex-direction: row-reverse;
   width: 100%;
 }
@@ -158,11 +162,11 @@ body, html {
 }
 
 /* Utility stuff ******************************************************************************************************/
-.edit-field-active, .edit-field:hover, .component .component-title, .value-with-label p:first-child {
+.edit-field-active, .edit-field:hover, .component .component-title, .value-with-label p:first-child, .middle-section .transactions-body .transactions-list .transaction-list-title {
   text-shadow: rgba(0, 0, 0, 0.1) 0 0.5px 0.5px;
 }
 
-.component .component-title {
+.component .component-title, .middle-section .transactions-body .transactions-list .transaction-list-title {
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.15);
 }
 
