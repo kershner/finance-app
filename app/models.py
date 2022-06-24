@@ -32,10 +32,9 @@ class CustomUser(AbstractUser):
         for transaction in transactions:
             group = transaction.group
             if group not in transactions_grouped:
-                group_total = group.total()  # TODO left off here - calculate sum of group
                 transactions_grouped[group] = {
                     'transactions': [transaction],
-                    'group_total': group_total
+                    'group_total': group.total()
                 }
             else:
                 transactions_grouped[group]['transactions'].append(transaction)
