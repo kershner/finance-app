@@ -14,15 +14,17 @@ class CustomUser(AbstractUser):
     def get_current_age(self):
         return math.floor((date.today() - self.birth_date).days / 365)
 
+    def get_years_old_from_num_months(self, num_months):
+        new_date = date.today() + relativedelta(months=num_months)
+        new_delta = new_date - self.birth_date
+        return math.floor(new_delta.days / 365)
+
     def get_transactions(self, transaction_type):
         return MonthlyTransaction.objects\
             .filter(user=self, type=transaction_type)\
             .annotate(total=Sum(F('multiplier') * F('amount')))\
             .order_by('-total')\
             .all()
-
-    def get_investments(self):
-        return self.get_transactions('ex').filter(group__name='Investment').all()
 
     def get_transactions_by_group(self, transaction_type):
         transactions_grouped = {}
@@ -46,6 +48,10 @@ class CustomUser(AbstractUser):
     def get_expenses_by_group(self):
         return self.get_transactions_by_group('ex')
 
+    def get_investments_total(self):
+        investments = self.get_transactions('ex').filter(group__name='Investment').all()
+        return investments.aggregate(Sum('amount'))['amount__sum']
+
     def get_monthly_transaction_total(self, transaction_type):
         monthly_total = Decimal(0.0)
         all_transactions = self.get_transactions(transaction_type)
@@ -66,11 +72,6 @@ class CustomUser(AbstractUser):
             'net_monthly_income': net_monthly_income
         }
 
-    def get_years_old_from_num_months(self, num_months):
-        new_date = date.today() + relativedelta(months=num_months)
-        new_delta = new_date - self.birth_date
-        return math.floor(new_delta.days / 365)
-
     def get_net_income_calculations(self, years_to_project=1):
         years_to_project = int(years_to_project)
         now = date.today()
@@ -78,7 +79,7 @@ class CustomUser(AbstractUser):
         step = int(years_to_project / 1)
         months = range(0, total_months + 1, step)
         income_calcs = self.get_income_calculations()
-        total_monthly_investment = self.get_investments().aggregate(Sum('amount'))['amount__sum']
+        total_monthly_investment = self.get_investments_total()
 
         net_income_calculations = []
         for month in months:
@@ -87,11 +88,14 @@ class CustomUser(AbstractUser):
             new_total = self.starting_value + net_income
             new_age = self.get_years_old_from_num_months(num_months=month)
             investment = total_monthly_investment * month
+
             years_rounded = round(month / 12, 2)
-            months_plural = 's' if month != 1 else ''
-            time_from_now_string = '{} month{}'.format(month, months_plural)
             years_plural = 's' if years_rounded != 1.00 else ''
             years_string = '{:.2g} year{}'.format(years_rounded, years_plural)
+
+            months_plural = 's' if month != 1 else ''
+            time_from_now_string = '{} month{}'.format(month, months_plural)
+
             if month > 12:
                 time_from_now_string = years_string
 
