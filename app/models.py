@@ -121,7 +121,10 @@ class TransactionGroup(models.Model):
         return '{}'.format(self.name)
 
     def total(self):
-        all_transactions = MonthlyTransaction.objects.filter(group=self).annotate(total=Sum(F('multiplier') * F('amount')))
+        all_transactions = MonthlyTransaction.objects\
+            .filter(group=self, muted=False)\
+            .annotate(total=Sum(F('multiplier') * F('amount')))
+
         total = 0
         for transaction in all_transactions:
             total += transaction.total
