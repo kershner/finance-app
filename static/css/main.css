@@ -50,7 +50,7 @@ body, html {
   margin-top: 0.5em;
   padding: 0.2em 1em;
   border-radius: 0.75em;
-  background-color: #858585;
+  background-color: #9400d3;
   color: white;
 }
 .middle-section .transactions-body .transactions-list .transaction-group {
@@ -66,6 +66,8 @@ body, html {
   display: flex;
   justify-content: space-between;
   border-bottom: 1px dotted;
+}
+.middle-section .transactions-body .transactions-list .transaction-group .transaction:not(.group-total) {
   cursor: pointer;
 }
 .middle-section .transactions-body .transactions-list .transaction-group .transaction:hover:not(:last-child) {
@@ -157,12 +159,33 @@ body, html {
 }
 
 /* Utility stuff ******************************************************************************************************/
+.hidden {
+  display: none !important;
+}
+
 .component .component-title, .value-with-label p:first-child, .middle-section .transactions-body .transactions-list .transaction-list-title {
   text-shadow: rgba(0, 0, 0, 0.1) 0 0.5px 0.5px;
 }
 
 .component .component-title, .middle-section .transactions-body .transactions-list .transaction-list-title {
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.15);
+}
+
+.component .component-title, .value-with-label p, body, html, .middle-section .transactions-body .transactions-list .transaction-group .transaction p {
+  padding: 0;
+  margin: 0;
+}
+
+.component, .middle-section .stats-section, .lower-section .predictions-table table {
+  margin: 0.5em auto;
+}
+
+.edit-transaction-form p select,
+.edit-transaction-form p input, .edit-transaction-form {
+  padding: 0.25em 0.5em;
+  background-color: white;
+  border-radius: 0.25em;
+  border: 1px solid #ced4da;
 }
 
 .value-with-label {
@@ -177,19 +200,6 @@ body, html {
 }
 .value-with-label p:first-child {
   font-size: 1.75em;
-}
-
-.component .component-title, body, html, .middle-section .transactions-body .transactions-list .transaction-group .transaction p, .value-with-label p {
-  padding: 0;
-  margin: 0;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.component, .middle-section .stats-section, .lower-section .predictions-table table {
-  margin: 0.5em auto;
 }
 
 .section-content {
@@ -213,14 +223,6 @@ body, html {
   }
 }
 
-.edit-transaction-form p select,
-.edit-transaction-form p input, .edit-transaction-form {
-  padding: 0.25em 0.5em;
-  background-color: white;
-  border-radius: 0.25em;
-  border: 1px solid #ced4da;
-}
-
 .edit-transaction-form {
   padding: 0.5em;
 }
@@ -242,6 +244,7 @@ body, html {
 .edit-transaction-form .edit-transaction-form-upper .form-close {
   align-self: flex-end;
   margin-bottom: 0.5em;
+  padding: 0.5em 0.75em;
 }
 .edit-transaction-form p {
   display: flex;

@@ -1,38 +1,11 @@
 let jsConfig = {
-    'useColors': undefined,
     'editTransactionsUrl': '',
     'editTransactionActonUrl': ''
 };
 
 jsConfig.init = function() {
-    if (jsConfig.useColors) {
-        jsConfig.colorElements();
-    }
-
     jsConfig.editTransactionClickEvent();
     jsConfig.addTransactionClickEvent();
-};
-
-jsConfig.colorElements = function() {
-    let randomTextColorElements = [
-        ...document.querySelectorAll('.value-with-label p:first-of-type'),
-        ...document.querySelectorAll('.expense-group-title'),
-        ...document.querySelectorAll('th')
-    ];
-    let randomBackgroundColorElements = [
-        ...document.querySelectorAll('.component-title')
-    ];
-
-    randomTextColorElements.forEach(element => {
-        element.style.color = randomColor({
-            'luminosity': 'bright'
-        });
-    });
-    randomBackgroundColorElements.forEach(element => {
-        element.style.backgroundColor = randomColor({
-            'luminosity': 'bright'
-        });
-    });
 };
 
 // Edit transaction click event
@@ -65,10 +38,8 @@ jsConfig.editTransactionClickEvent = function() {
 // Add transaction click event
 jsConfig.addTransactionClickEvent = function() {
     document.querySelector('.add-transaction-btn').addEventListener('click', function(e) {
-        let transactionRow = e.target;
-        let fullEndpoint = `${jsConfig.editTransactionsUrl}`;
-        fetchWrapper(fullEndpoint, 'get', {}, function(data) {
-            jsConfig.addEditTransactionForm(transactionRow, data);
+        fetchWrapper(jsConfig.editTransactionsUrl, 'get', {}, function(data) {
+            jsConfig.addEditTransactionForm(e.target, data);
         });
     });
 };
@@ -88,6 +59,13 @@ jsConfig.addEditTransactionForm = function(transactionRow, data) {
         });
     });
 
+    // TODO - left off here, want to be able to add new groups from the Edit Transaction Menu
+    wrapperDiv.querySelector('select[name="group"]').addEventListener('change', function(e) {
+        let select = e.target;
+        console.log(select.value);
+        console.log(typeof(select.value));
+    });
+
     document.body.appendChild(wrapperDiv);
 };
 
@@ -103,7 +81,7 @@ jsConfig.editTransactionFormAction = function(controlDiv) {
         'action': action,
         'transactionId': controlDiv.dataset.id
     };
-    fetchWrapper(jsConfig.editTransactionActonUrl, 'post', params, function(data) {
+    fetchWrapper(jsConfig.editTransactionActonUrl, 'post', params, function() {
         location.reload();
     });
 };

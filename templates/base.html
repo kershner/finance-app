@@ -1,5 +1,4 @@
 {% load static %}
-{% load djmoney %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,11 +16,9 @@
         {% include 'lower_section.html' %}
     {% endblock %}
 
-    <script type="text/javascript" src="{% static 'vendor/js/randomColor.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
     <script type="text/javascript">
-        jsConfig.useColors = {{ request.user.use_colors|yesno:'true,false' }};
         jsConfig.editTransactionsUrl = '{% url 'edit-transaction' %}';
         jsConfig.editTransactionActonUrl = '{% url 'edit-transaction-action' %}';
         jsConfig.init();

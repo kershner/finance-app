@@ -3,8 +3,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404
-from .models import MonthlyTransaction, Group
 from .forms import MonthlyTransactionForm
+from .models import MonthlyTransaction
 from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.views import View
@@ -20,9 +20,7 @@ class HomeView(View):
         years = int(request.GET.get('years', 1))
         years = int(years if min_years <= years <= max_years else min_years)
         ctx = {
-            'years_to_project': years,
-            'income_groups': Group.objects.filter(type='in').all(),
-            'expense_groups': Group.objects.filter(type='ex').all(),
+            'years_to_project': years
         }
 
         user = get_user()
@@ -48,11 +46,10 @@ class EditTransactionView(View):
         return JsonResponse({'success': True, 'html': html}, status=200)
 
     def post(self, request, transaction_id=None):
+        self.form = MonthlyTransactionForm(request.POST)
         if transaction_id:
             instance = get_object_or_404(MonthlyTransaction, id=transaction_id)
             self.form = MonthlyTransactionForm(request.POST, instance=instance)
-        else:
-            self.form = MonthlyTransactionForm(request.POST)
 
         if self.form.is_valid():
             self.form.instance.user = get_user()
@@ -72,17 +69,7 @@ class EditTransactionActionView(View):
         return JsonResponse({}, status=405)
 
     @staticmethod
-    def success_response():
-        return JsonResponse({'success': True}, status=200)
-
-    @staticmethod
-    def error_response(msg):
-        return JsonResponse({'success': False, 'message': msg}, status=500)
-
-    def incomplete_payload_response(self, e):
-        return self.error_response('Incomplete payload, missing: {}'.format(e))
-
-    def post(self, request):
+    def post(request):
         try:
             body = json.loads(request.body)
             transaction_id = body['transactionId']
@@ -97,6 +84,6 @@ class EditTransactionActionView(View):
                 pass
 
         except KeyError as e:
-            return self.incomplete_payload_response(e)
+            return JsonResponse({'success': False, 'message': 'Incomplete payload, missing: {}'.format(e)})
 
         return JsonResponse({'success': True}, status=200)
