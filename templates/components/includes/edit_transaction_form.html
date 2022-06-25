@@ -1,0 +1,20 @@
+{% if transaction_id %}
+<form class="edit-transaction-form" method="post" action="{% url 'edit-transaction' transaction_id=transaction_id %}" data-id="{{ transaction_id }}">
+{% else %}
+<form class="edit-transaction-form" method="post" action="{% url 'edit-transaction' %}">
+{% endif %}
+    {% csrf_token %}
+
+    <div class="edit-transaction-form-upper">
+        <div data-action="close" class="edit-transaction-action form-close">X</div>
+        {% if transaction_id %}
+        <div class="edit-transaction-form-controls">
+            <div class="edit-transaction-action" data-action="delete" data-id="{{ transaction_id }}">Delete</div>
+            <div class="edit-transaction-action" data-action="mute" data-id="{{ transaction_id }}">Mute</div>
+         </div>
+        {% endif %}
+    </div>
+
+    {{ form.as_p }}
+    <button class="edit-transaction-form-submit" type="submit">Submit</button>
+</form>

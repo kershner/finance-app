@@ -1,8 +1,11 @@
-from .models import CustomUser, MonthlyTransaction, Group
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.core.exceptions import ValidationError
+from django.template.loader import render_to_string
+from django.shortcuts import get_object_or_404
+from .models import MonthlyTransaction, Group
+from .forms import MonthlyTransactionForm
+from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.views import View
 from .util import get_user
@@ -31,8 +34,39 @@ class HomeView(View):
         return TemplateResponse(request, 'base.html', ctx)
 
 
+class EditTransactionView(View):
+    form = MonthlyTransactionForm()
+    template = 'components/includes/edit_transaction_form.html'
+
+    def get(self, request, transaction_id=None):
+        if transaction_id:
+            transaction = MonthlyTransaction.objects.get(id=transaction_id)
+            self.form = MonthlyTransactionForm(instance=transaction)
+
+        ctx = {'form': self.form, 'transaction_id': transaction_id}
+        html = render_to_string(self.template, context=ctx, request=request)
+        return JsonResponse({'success': True, 'html': html}, status=200)
+
+    def post(self, request, transaction_id=None):
+        if transaction_id:
+            instance = get_object_or_404(MonthlyTransaction, id=transaction_id)
+            self.form = MonthlyTransactionForm(request.POST, instance=instance)
+        else:
+            self.form = MonthlyTransactionForm(request.POST)
+
+        if self.form.is_valid():
+            self.form.instance.user = get_user()
+            self.form.save()
+            # TODO flash message
+        else:
+            # TODO flash message / handle invalid form
+            pass
+
+        return redirect('home')
+
+
 @method_decorator(csrf_exempt, name='dispatch')
-class BasePostResponse(View):
+class EditTransactionActionView(View):
     @staticmethod
     def get():
         return JsonResponse({}, status=405)
@@ -48,57 +82,21 @@ class BasePostResponse(View):
     def incomplete_payload_response(self, e):
         return self.error_response('Incomplete payload, missing: {}'.format(e))
 
-
-class UpdateEditFieldsView(BasePostResponse):
-    post_values_model_mapping = {
-        'user': CustomUser,
-        'monthly_transaction': MonthlyTransaction,
-        'group': Group
-    }
-
     def post(self, request):
         try:
             body = json.loads(request.body)
-            model = body['model']
-            instance_id = body['id']
-            field = body['field']
-            new_value = body['newValue']
+            transaction_id = body['transactionId']
+            action = body['action']
+
+            transaction = MonthlyTransaction.objects.get(id=transaction_id)
+            if action == 'delete':
+                # TODO flash message
+                transaction.delete()
+            elif action == 'mute':
+                # TODO - implement MUTE functionality
+                pass
+
         except KeyError as e:
             return self.incomplete_payload_response(e)
 
-        try:
-            mapped_model = self.post_values_model_mapping[model]
-        except KeyError:
-            mapped_model = None
-
-        if mapped_model:
-            model_instance = mapped_model.objects.filter(id=instance_id).first()
-            setattr(model_instance, field, new_value)
-
-            try:
-                model_instance.save()
-            except (ValidationError, ValueError) as e:
-                return self.error_response(e.message if hasattr(e, 'message') else str(e))
-
-        return self.success_response()
-
-
-class AddTransactionView(BasePostResponse):
-    @staticmethod
-    def post(request):
-        new_transaction_type = request.POST.get('new-transaction-type')
-        new_transaction_name = request.POST.get('new-transaction-name')
-        new_transaction_amount = request.POST.get('new-transaction-amount')
-        group_name = request.POST.get('transaction-group-name')
-
-        group, created = Group.objects.get_or_create(name=group_name, type=new_transaction_type)
-        MonthlyTransaction.objects.get_or_create(
-            user=get_user(),
-            type=new_transaction_type,
-            name=new_transaction_name,
-            amount=new_transaction_amount,
-            group=group
-        )
-
-        # TODO flash message
-        return HomeView().get(request)
+        return JsonResponse({'success': True}, status=200)

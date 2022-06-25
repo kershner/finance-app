@@ -77,6 +77,12 @@ body, html
           display: flex
           justify-content: space-between
           border-bottom: 1px dotted
+          cursor: pointer
+
+          &:hover:not(:last-child)
+            background: $purple
+            color: white
+
           &:last-child
             border-bottom: none
 
@@ -90,9 +96,6 @@ body, html
 
           .transaction-amount
             display: flex
-            &:hover
-              .edit-field
-                display: block !important
 
             .multiplier-symbol
               margin: 0 .25em
@@ -226,53 +229,51 @@ body, html
       max-width: 30em
       border-radius: 0.3em
 
-.edit-field
-  cursor: pointer
-  &:hover
-    @extend .edit-field-active
-
-.edit-field-active
-  @extend %text-shadow
-  color: white
-  text-decoration: underline
-  background-color: $purple
-
 %generic-card-styling
   padding: .25em .5em
   background-color: white
   border-radius: .25em
   border: 1px solid $grey
 
-.edit-field-form
-  position: absolute
-  display: flex
-  flex-direction: column
-  align-items: center
+// Edit Transaction Form
+.edit-transaction-form
+  padding: 0.5em
   @extend %generic-card-styling
 
-  label
-    font-size: 1.2em
-    color: $purple
-  input,
-  button
-    @extend button
-    margin-top: .25em
-    max-width: 10em
+  .edit-transaction-form-upper
+    display: flex
+    flex-direction: column
+    font-size: .6em
 
-.add-transaction-form
-  position: absolute
-  @extend %generic-card-styling
+    .edit-transaction-form-controls
+      display: flex
+      justify-content: center
+      div
+        margin: .25em .1em
+        @extend button
 
-.form-row
-  display: flex
-  flex-direction: column
-  margin: .25em auto
-  label
-    margin-bottom: .25em
-    font-size: 0.8em
-  select,
-  input
-    padding: 0.5em 0.25em
-    @extend %generic-card-styling
-  select
-    cursor: pointer
+        &:last-of-type
+          margin-right: 0
+
+    .form-close
+      align-self: flex-end
+      @extend button
+      margin-bottom: .5em
+
+  p
+    display: flex
+    flex-direction: column
+    margin: 0.5em 0
+
+    label
+      margin-bottom: .35em
+      font-size: 0.8em
+      color: darken($grey, 15)
+
+    select,
+    input
+      padding: 0.5em 0.25em
+      @extend %generic-card-styling
+
+  .edit-transaction-form-submit
+    width: 100%

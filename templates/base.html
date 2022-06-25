@@ -12,13 +12,9 @@
 
 <body>
     {% block content %}
-        {% if user %}
-            {% include 'upper_section.html' %}
-            {% include 'middle_section.html' %}
-            {% include 'lower_section.html' %}
-        {% else %}
-            <h1>No User created yet!</h1>
-        {% endif %}
+        {% include 'upper_section.html' %}
+        {% include 'middle_section.html' %}
+        {% include 'lower_section.html' %}
     {% endblock %}
 
     <script type="text/javascript" src="{% static 'vendor/js/randomColor.js' %}"></script>
@@ -26,20 +22,8 @@
     <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
     <script type="text/javascript">
         jsConfig.useColors = {{ request.user.use_colors|yesno:'true,false' }};
-        jsConfig.updateEditFieldsUrl = '{% url 'update-edit-fields' %}';
-        jsConfig.addTransactionUrl = '{% url 'add-transaction' %}';
-        jsConfig.expenseGroupOptions = {
-            {% for group in expense_groups %}
-                '{{ group.name }}': '{{ group.name}}',
-            {% endfor %}
-            'add': 'Add new Expense Group'
-        };
-        jsConfig.incomeGroupOptions = {
-            {% for group in income_groups %}
-                '{{ group.name }}': '{{ group.name}}',
-            {% endfor %}
-            'add': 'Add new Income Group'
-        };
+        jsConfig.editTransactionsUrl = '{% url 'edit-transaction' %}';
+        jsConfig.editTransactionActonUrl = '{% url 'edit-transaction-action' %}';
         jsConfig.init();
     </script>
 </body>

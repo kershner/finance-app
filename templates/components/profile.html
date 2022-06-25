@@ -3,47 +3,19 @@
 <div class="component">
     <div class="profile-section">
         <div class="component-title">
-            <span class="edit-field"
-                  data-type="text"
-                  data-model="user"
-                  data-label="First Name"
-                  data-field="first_name"
-                  data-id="{{ user.id }}"
-                  data-current-value="{{ user.first_name }}">
-                {{ user.first_name }}
-            </span>
-            <span class="edit-field"
-                  data-model="user"
-                  data-label="Last Name"
-                  data-field="last_name"
-                  data-id="{{ user.id }}"
-                  data-current-value="{{ user.last_name }}">
-                {{ user.last_name }}
-            </span>
-
+            <span>{{ user.first_name }}</span>
+            <span>{{ user.last_name }}</span>
             <a class="admin-edit-link" href="{% url 'admin:app_customuser_change' user.id %}">Edit</a>
         </div>
 
         <div class="section-content">
             <div class="value-with-label">
-                <p class="edit-field"
-                   data-type="date"
-                   data-model="user"
-                   data-label="Birth Date"
-                   data-field="birth_date"
-                   data-id="{{ user.id }}"
-                   data-current-value="{{ user.birth_date }}">{{ user.get_current_age }}</p>
+                <p>{{ user.get_current_age }}</p>
                 <p>Age</p>
             </div>
 
             <div class="value-with-label">
-                <p class="edit-field"
-                   data-type="decimal"
-                   data-model="user"
-                   data-label="Starting Value"
-                   data-field="starting_value"
-                   data-id="{{ user.id }}"
-                   data-current-value="{{ user.starting_value }}">{{ user.starting_value|money_format }}</p>
+                <p data-current-value="{{ user.starting_value }}">{{ user.starting_value|money_format }}</p>
                 <p>Starting Value</p>
             </div>
         </div>

@@ -1,10 +1,7 @@
 let jsConfig = {
     'useColors': undefined,
-    'updateEditFieldsUrl': '',
-    'addTransactionUrl': '',
-    'newGroupInputAdded': false,
-    'expenseGroupOptions': {},
-    'incomeGroupOptions': {}
+    'editTransactionsUrl': '',
+    'editTransactionActonUrl': ''
 };
 
 jsConfig.init = function() {
@@ -12,7 +9,7 @@ jsConfig.init = function() {
         jsConfig.colorElements();
     }
 
-    jsConfig.addEditFieldClickEvent();
+    jsConfig.editTransactionClickEvent();
     jsConfig.addTransactionClickEvent();
 };
 
@@ -38,241 +35,75 @@ jsConfig.colorElements = function() {
     });
 };
 
-// Edit field menu
-jsConfig.addEditFieldClickEvent = function() {
-    document.querySelectorAll('.edit-field').forEach(function(e) {
+// Edit transaction click event
+jsConfig.editTransactionClickEvent = function() {
+    document.querySelectorAll('.transaction').forEach(function(e) {
         e.addEventListener('click', function(e) {
-            jsConfig.editFieldClickEvent(e.target);
-        });
-    });
-};
+            let transactionRow = e.target;
+            let transactionId = transactionRow.dataset.id;
 
-jsConfig.editFieldClickEvent = function(editField) {
-    if (hasClass(editField, 'edit-field-active')) {
-        jsConfig.editFormTeardown();
-        return;
-    }
+            if (transactionId === undefined) {
+                transactionRow = transactionRow.closest('.transaction');
+                transactionId = transactionRow.dataset.id;
+            }
 
-    jsConfig.editFormTeardown();
-    addClass(editField, 'edit-field-active');
-
-    jsConfig.addEditFieldForm(editField);
-    jsConfig.editFormSubmitEvent(editField);
-};
-
-// Create/append form to edit the value
-jsConfig.addEditFieldForm = function(editField) {
-    let top = `${editField.offsetTop + editField.offsetHeight}px`;
-    let left = `${editField.offsetLeft}px`;
-    let styleString = `style="top: ${top}; left: ${left};"`;
-    let formTemplateDiv = document.createElement('div');
-    let currentValue = editField.dataset.currentValue;
-    if (editField.dataset.type === 'decimal') {
-        currentValue = Number(currentValue.replace(/[^0-9\.]+/g,""));
-    }
-
-    formTemplateDiv.innerHTML = `
-        <form class="edit-field-form" ${styleString}>
-            <label for="new-value">${editField.dataset.label}</label>
-            <input
-                class="edit-field-value"
-                name="new-value"
-                type="${editField.dataset.type}"
-                placeholder="${currentValue}"
-                required>
-            <button class="edit-field-submit" type="submit">Submit</button>
-        </form>
-    `;
-    document.body.appendChild(formTemplateDiv);
-    formTemplateDiv.querySelector('input').focus();
-};
-
-// Form submit event
-jsConfig.editFormSubmitEvent = function(editField) {
-    document.querySelector('.edit-field-submit').addEventListener('click', function() {
-        let form = document.querySelector('.edit-field-form');
-        if (form.checkValidity()) {
-            let params = {
-                'model': editField.dataset.model,
-                'id': editField.dataset.id,
-                'field': editField.dataset.field,
-                'newValue': document.querySelector('.edit-field-value').value,
-                'fieldValue': editField.dataset.fieldValue
-            };
-            fetchWrapper(jsConfig.updateEditFieldsUrl, 'post', params, function(data) {
-                if (data.success === true) {
-                    location.reload();
-                }
-            });
-        }
-    });
-};
-
-jsConfig.editFormTeardown = function() {
-    let allOpenEditForms = document.querySelectorAll('.edit-field-form');
-    allOpenEditForms.forEach(openEditForm => {
-       openEditForm.remove();
-    });
-
-    let allEditFields = document.querySelectorAll('.edit-field');
-    allEditFields.forEach(editField => {
-       removeClass(editField, 'edit-field-active');
-    });
-};
-
-// Add transaction functionality
-jsConfig.addTransactionClickEvent = function () {
-    document.querySelectorAll('.add-transaction-btn').forEach(function (item) {
-        item.addEventListener('click', function (e) {
-            let addTransactionBtn = e.target;
-            let transactionType = e.target.dataset.type;
-
-            if (hasClass(addTransactionBtn, 'active')) {
-                jsConfig.addTransactionFormTeardown();
+            if (!transactionId) {
                 return;
             }
 
-            jsConfig.addTransactionFormTeardown();
-
-            addClass(addTransactionBtn, 'active');
-            jsConfig.appendAddTransactionForm(addTransactionBtn, transactionType);
+            let existingForm = document.querySelector(`.edit-transaction-form[data-id='${transactionId}']`);
+            if (!existingForm) {
+                let fullEndpoint = `${jsConfig.editTransactionsUrl}/${transactionId}`;
+                fetchWrapper(fullEndpoint, 'get', {}, function(data) {
+                    jsConfig.addEditTransactionForm(transactionRow, data);
+                });
+            }
         });
     });
 };
 
-// Create/append form to add transaction / group
-jsConfig.appendAddTransactionForm = function(addTransactionBtn, transactionType) {
-    let top = `${addTransactionBtn.offsetTop + addTransactionBtn.offsetHeight}px`;
-    let left = `${addTransactionBtn.offsetLeft}px`;
-    let styleString = `style="top: ${top}; left: ${left};"`;
-    let transactionTypeDisplay = jsConfig.getTransactionTypeDisplay(transactionType);
-    let groupOptions = transactionType == 'ex' ? jsConfig.expenseGroupOptions : jsConfig.incomeGroupOptions;
-    let formTemplateDiv = jsConfig.getNewDivElement(`
-        <form action="${jsConfig.addTransactionUrl}" method="post" class="add-transaction-form" ${styleString}>
-            ${jsConfig.getAddTransactionFormRow({
-                'name': 'transaction-group-name',
-                'label': `${transactionTypeDisplay} Group`,
-                'selectOptions': groupOptions
-            })}
-
-            ${jsConfig.getAddTransactionFormRow({
-                'name': 'new-transaction-type',
-                'type': 'text',
-                'value': transactionType,
-                'hidden': true
-            })}
-
-            ${jsConfig.getAddTransactionFormRow({
-                'name': 'new-transaction-name',
-                'label': `${transactionTypeDisplay} Name`,
-                'type': 'text',
-                'placeholder': 'ex. pizza'
-            })}
-
-            ${jsConfig.getAddTransactionFormRow({
-                'name': 'new-transaction-amount',
-                'label': `${transactionTypeDisplay} Amount`,
-                'type': 'decimal',
-                'placeholder': '0.0',
-                'min': 1
-            })}
-
-            <div class="form-row">
-                <button type="submit">Add</button>
-            </div>
-        </form>
-    `);
-    document.body.appendChild(formTemplateDiv);
-    formTemplateDiv.querySelector('input[name="new-transaction-name"]').focus();
-
-    jsConfig.addNewGroupClickEvent(formTemplateDiv, transactionType);
-};
-
-jsConfig.addNewGroupClickEvent = function(formTemplateDiv, transactionType) {
-    let groupSelect = formTemplateDiv.querySelector('select');
-    let inputName = 'transaction-group-name';
-
-    groupSelect.addEventListener('change', function() {
-        if (this.value === 'add' && !jsConfig.newGroupInputAdded) {
-            let groupNameDiv = jsConfig.getNewDivElement(`
-                ${jsConfig.getAddTransactionFormRow({
-                    'name': 'transaction-group-type',
-                    'type': 'text',
-                    'value': transactionType,
-                    'hidden': true
-                })}
-
-                ${jsConfig.getAddTransactionFormRow({
-                    'name': inputName,
-                    'label': 'New Group Name',
-                    'type': 'text',
-                    'placeholder': 'ex. Video Games'
-                })}
-            `);
-            groupSelect.parentNode.insertBefore(groupNameDiv, groupSelect.nextSibling);
-            jsConfig.newGroupInputAdded = true;
-        } else {
-            let newGroupInput = document.querySelector(`input[name=${inputName}]`);
-            if (newGroupInput !== null) {
-                document.querySelector(`input[name=${inputName}]`).parentNode.remove();
-                jsConfig.newGroupInputAdded = false;
-            }
-        }
+// Add transaction click event
+jsConfig.addTransactionClickEvent = function() {
+    document.querySelector('.add-transaction-btn').addEventListener('click', function(e) {
+        let transactionRow = e.target;
+        let fullEndpoint = `${jsConfig.editTransactionsUrl}`;
+        fetchWrapper(fullEndpoint, 'get', {}, function(data) {
+            jsConfig.addEditTransactionForm(transactionRow, data);
+        });
     });
 };
 
-jsConfig.getNewDivElement = function(innerHtml) {
-    let newDivElement = document.createElement('div');
-    newDivElement.innerHTML = innerHtml;
-    return newDivElement
+jsConfig.addEditTransactionForm = function(transactionRow, data) {
+    let top = `${transactionRow.offsetTop + transactionRow.offsetHeight}px`;
+    let left = `${transactionRow.offsetLeft}px`;
+    let wrapperDiv = document.createElement('div');
+    wrapperDiv.style = `position: absolute; top: ${top}; left: ${left};`;
+    wrapperDiv.innerHTML = data.html;
+
+    // Add click events to control divs
+    let controlDivs = wrapperDiv.querySelectorAll('.edit-transaction-action');
+    controlDivs.forEach(function(e) {
+        e.addEventListener('click', function(e) {
+            jsConfig.editTransactionFormAction(e.target);
+        });
+    });
+
+    document.body.appendChild(wrapperDiv);
 };
 
-jsConfig.getAddTransactionFormRow = function(inputAttrs) {
-    let selectHtml = undefined;
-    let inputHtml = undefined;
-
-    if (inputAttrs.selectOptions !== undefined) {
-        let selectOptionsHtml = '';
-        for (let option in inputAttrs.selectOptions) {
-            selectOptionsHtml += `<option value="${option}">${inputAttrs.selectOptions[option]}</option>`;
-        }
-        selectHtml = `<select name="${inputAttrs.name}" required>${selectOptionsHtml}</select>`;
-    } else {
-        inputHtml = `
-            <input
-            class="${inputAttrs.hidden ? 'hidden' : ''}"
-            name="${inputAttrs.name}"
-            type="${inputAttrs.type}"
-            placeholder="${inputAttrs.placeholder ? inputAttrs.placeholder : ''}"
-            min="${inputAttrs.min ? inputAttrs.min : 0}"
-            value="${inputAttrs.value ? inputAttrs.value : ''}"
-            required>
-        `;
+jsConfig.editTransactionFormAction = function(controlDiv) {
+    let action = controlDiv.dataset.action;
+    if (action === 'close') {
+        // TODO - need to remove .edit-transaction-form's PARENT node
+        controlDiv.closest('.edit-transaction-form').remove();
+        return;
     }
 
-    return `
-        <div class="form-row">
-            <label class="${inputAttrs.hidden ? 'hidden' : ''}" for="${inputAttrs.name}">${inputAttrs.label}</label>
-            ${selectHtml ? selectHtml : ''}
-            ${inputHtml ? inputHtml : ''}
-        </div>
-    `;
-};
-
-jsConfig.addTransactionFormTeardown = function() {
-    let addTransactionForms = document.querySelectorAll('.add-transaction-form');
-    addTransactionForms.forEach(function(form) {
-       form.remove();
+    let params = {
+        'action': action,
+        'transactionId': controlDiv.dataset.id
+    };
+    fetchWrapper(jsConfig.editTransactionActonUrl, 'post', params, function(data) {
+        location.reload();
     });
-
-    let addTransactionBtns = document.querySelectorAll('.add-transaction-btn');
-    addTransactionBtns.forEach(function(btn) {
-      removeClass(btn, 'active');
-    });
-
-    jsConfig.newGroupInputAdded = false;
-};
-
-jsConfig.getTransactionTypeDisplay = function(transactionType) {
-    return transactionType === 'in' ? 'Income' : 'Expense';
 };
