@@ -70,7 +70,11 @@ body, html {
 .middle-section .transactions-body .transactions-list .transaction-group .transaction:not(.group-total) {
   cursor: pointer;
 }
-.middle-section .transactions-body .transactions-list .transaction-group .transaction:hover:not(:last-child) {
+.middle-section .transactions-body .transactions-list .transaction-group .transaction.muted {
+  background-color: #ebeef0;
+  color: #ced4da;
+}
+.middle-section .transactions-body .transactions-list .transaction-group .transaction:hover:not(:last-child):not(.muted) {
   background: #9400d3;
   color: white;
 }

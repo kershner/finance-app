@@ -1,5 +1,5 @@
-{% if transaction_id %}
-<form class="edit-transaction-form" method="post" action="{% url 'edit-transaction' transaction_id=transaction_id %}" data-id="{{ transaction_id }}">
+{% if transaction %}
+<form class="edit-transaction-form" method="post" action="{% url 'edit-transaction' transaction_id=transaction.id %}" data-id="{{ transaction.id }}">
 {% else %}
 <form class="edit-transaction-form" method="post" action="{% url 'edit-transaction' %}">
 {% endif %}
@@ -7,10 +7,9 @@
 
     <div class="edit-transaction-form-upper">
         <div data-action="close" class="edit-transaction-action form-close">X</div>
-        {% if transaction_id %}
+        {% if transaction %}
         <div class="edit-transaction-form-controls">
-            <div class="edit-transaction-action" data-action="delete" data-id="{{ transaction_id }}">Delete</div>
-            <div class="edit-transaction-action" data-action="mute" data-id="{{ transaction_id }}">Mute</div>
+            <div class="edit-transaction-action" data-action="delete" data-id="{{ transaction.id }}">Delete</div>
          </div>
         {% endif %}
     </div>

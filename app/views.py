@@ -40,11 +40,13 @@ class EditTransactionView(View):
     template = 'components/includes/edit_transaction_form.html'
 
     def get(self, request, transaction_id=None):
+        ctx = {}
         if transaction_id:
             transaction = MonthlyTransaction.objects.get(id=transaction_id)
             self.form = MonthlyTransactionForm(instance=transaction)
+            ctx['transaction'] = transaction
 
-        ctx = {'form': self.form, 'transaction_id': transaction_id}
+        ctx['form'] = self.form
         html = render_to_string(self.template, context=ctx, request=request)
         return JsonResponse({'success': True, 'html': html}, status=200)
 
@@ -58,9 +60,6 @@ class EditTransactionView(View):
             self.form.instance.user = get_user()
             self.form.save()
             # TODO flash message
-        else:
-            # TODO flash message / handle invalid form
-            pass
 
         return redirect('home')
 
@@ -82,9 +81,6 @@ class EditTransactionActionView(View):
             if action == 'delete':
                 # TODO flash message
                 transaction.delete()
-            elif action == 'mute':
-                # TODO - implement MUTE functionality
-                pass
 
         except KeyError as e:
             return JsonResponse({'success': False, 'message': 'Incomplete payload, missing: {}'.format(e)})

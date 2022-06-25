@@ -24,8 +24,15 @@ jsConfig.editTransactionClickEvent = function() {
                 return;
             }
 
-            let existingForm = document.querySelector(`.edit-transaction-form[data-id='${transactionId}']`);
-            if (!existingForm) {
+            // Remove existing forms
+            let clickingExistingForm = false;
+            document.querySelectorAll(`.edit-transaction-form`).forEach(function(e) {
+                clickingExistingForm =  transactionId === e.dataset.id;
+                e.remove()
+            });
+
+            // Only show the form is user is not clicking on same form that's already open (UX shortcut)
+            if (!clickingExistingForm) {
                 let fullEndpoint = `${jsConfig.editTransactionsUrl}/${transactionId}`;
                 fetchWrapper(fullEndpoint, 'get', {}, function(data) {
                     jsConfig.addEditTransactionForm(transactionRow, data);

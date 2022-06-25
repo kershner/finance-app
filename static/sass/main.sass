@@ -80,7 +80,11 @@ body, html
           &:not(.group-total)
             cursor: pointer
 
-          &:hover:not(:last-child)
+          &.muted
+            background-color: lighten($grey, 10)
+            color: $grey
+
+          &:hover:not(:last-child):not(.muted)
             background: $purple
             color: white
 

@@ -15,7 +15,7 @@
         </div>
 
         {% for transaction in data.transactions %}
-        <div class="transaction" data-id="{{ transaction.id }}">
+        <div class="transaction {% if transaction.muted %}muted{% endif %}" data-id="{{ transaction.id }}">
             <div class="transaction-name">
                 <p>{{ transaction }}</p>
             </div>

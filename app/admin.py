@@ -1,4 +1,4 @@
-from .models import CustomUser, MonthlyTransaction, Group
+from .models import CustomUser, MonthlyTransaction, TransactionGroup
 from django.contrib import admin
 
 
@@ -19,6 +19,6 @@ class MonthlyTransactionAdmin(admin.ModelAdmin):
     list_per_page = 100
 
 
-@admin.register(Group)
-class GroupAdmin(admin.ModelAdmin):
+@admin.register(TransactionGroup)
+class TransactionGroupAdmin(admin.ModelAdmin):
     list_per_page = 100

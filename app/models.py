@@ -49,8 +49,10 @@ class CustomUser(AbstractUser):
     def get_monthly_transaction_total(self, transaction_type):
         monthly_total = Decimal(0.0)
         all_transactions = self.get_transactions(transaction_type)
+
         for transaction in all_transactions:
-            monthly_total += transaction.amount * transaction.multiplier
+            if not transaction.muted:
+                monthly_total += transaction.amount * transaction.multiplier
         return monthly_total
 
     def get_income_calculations(self):
@@ -104,13 +106,14 @@ class CustomUser(AbstractUser):
 
         return net_income_calculations
 
+
 TRANSACTION_TYPES = [
     ('ex', 'Expense'),
     ('in', 'Income'),
 ]
 
 
-class Group(models.Model):
+class TransactionGroup(models.Model):
     type = models.CharField(max_length=2, choices=TRANSACTION_TYPES, default='ex')
     name = models.CharField(null=False, blank=False, max_length=100)
 
@@ -130,9 +133,10 @@ class MonthlyTransaction(models.Model):
     type = models.CharField(max_length=2, choices=TRANSACTION_TYPES, default='ex')
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, blank=True, null=True)
     name = models.CharField(null=False, blank=False, max_length=100)
-    group = models.ForeignKey(Group, on_delete=models.SET_NULL, blank=True, null=True)
+    group = models.ForeignKey(TransactionGroup, on_delete=models.SET_NULL, blank=True, null=True)
     amount = models.DecimalField(max_digits=14, decimal_places=2)
     multiplier = models.IntegerField(default=1)
+    muted = models.BooleanField(default=False)
 
     def __str__(self):
         return '{}'.format(self.name)
