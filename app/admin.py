@@ -11,6 +11,7 @@ class MonthlyTransactionInline(admin.TabularInline):
 class CustomUserAdmin(admin.ModelAdmin):
     list_per_page = 100
     inlines = [MonthlyTransactionInline]
+    fields = ['first_name', 'last_name', 'birth_date', 'starting_value']
 
 
 @admin.register(MonthlyTransaction)
