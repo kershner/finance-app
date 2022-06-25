@@ -3,19 +3,15 @@
 <div class="transactions-list">
     <div class="transaction-list-title">
         {% if transaction_type == 'in' %}
-            Income
+            Monthly Income
         {% else %}
-            Expenses
+            Monthly Expenses
         {% endif %}
     </div>
     {% for group, data in transaction_groups.items %}
     <div class="transaction-group">
         <div class="transaction-group-title">
             <span>{{ group.name }}</span>
-
-            {% if forloop.counter == 1 %}
-            <span>Monthly {{ group.get_type_display }}</span>
-            {% endif %}
         </div>
 
         {% for transaction in data.transactions %}

@@ -5,6 +5,7 @@ from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404
 from .forms import MonthlyTransactionForm
 from .models import MonthlyTransaction
+from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.views import View
@@ -25,6 +26,8 @@ class HomeView(View):
 
         user = get_user()
         if user:
+            login(request, user)
+
             ctx.update({
                 'user': user,
                 'net_income_calculations': user.get_net_income_calculations(years_to_project=years)

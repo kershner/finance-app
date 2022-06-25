@@ -38,9 +38,12 @@ jsConfig.editTransactionClickEvent = function() {
 // Add transaction click event
 jsConfig.addTransactionClickEvent = function() {
     document.querySelector('.add-transaction-btn').addEventListener('click', function(e) {
-        fetchWrapper(jsConfig.editTransactionsUrl, 'get', {}, function(data) {
-            jsConfig.addEditTransactionForm(e.target, data);
-        });
+        let existingForm = document.querySelector('.edit-transaction-form');
+        if (!existingForm) {
+            fetchWrapper(jsConfig.editTransactionsUrl, 'get', {}, function(data) {
+                jsConfig.addEditTransactionForm(e.target, data);
+            });
+        }
     });
 };
 
