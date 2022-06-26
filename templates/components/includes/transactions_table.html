@@ -11,7 +11,7 @@
     {% for group, data in transaction_groups.items %}
     <div class="transaction-group">
         <div class="transaction-group-title">
-            <span>{{ group.name }}</span>
+            <span>{{ group.group_name }}</span>
         </div>
 
         {% for transaction in data.transactions %}

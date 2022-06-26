@@ -1,10 +1,10 @@
+from .forms import MonthlyTransactionForm, AddTransactionGroupForm
+from .models import MonthlyTransaction, TransactionGroup
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404
-from .forms import MonthlyTransactionForm
-from .models import MonthlyTransaction
 from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.http import JsonResponse
@@ -36,29 +36,45 @@ class HomeView(View):
 
 
 class EditTransactionView(View):
-    form = MonthlyTransactionForm()
+    transaction_form = MonthlyTransactionForm()
+    add_group_form = AddTransactionGroupForm()
     template = 'components/includes/edit_transaction_form.html'
 
     def get(self, request, transaction_id=None):
         ctx = {}
+
         if transaction_id:
             transaction = MonthlyTransaction.objects.get(id=transaction_id)
-            self.form = MonthlyTransactionForm(instance=transaction)
+            self.transaction_form = MonthlyTransactionForm(instance=transaction)
+            self.add_group_form = AddTransactionGroupForm(instance=transaction.group)
             ctx['transaction'] = transaction
 
-        ctx['form'] = self.form
+        ctx['transaction_form'] = self.transaction_form
+        ctx['add_group_form'] = self.add_group_form
         html = render_to_string(self.template, context=ctx, request=request)
         return JsonResponse({'success': True, 'html': html}, status=200)
 
     def post(self, request, transaction_id=None):
-        self.form = MonthlyTransactionForm(request.POST)
-        if transaction_id:
-            instance = get_object_or_404(MonthlyTransaction, id=transaction_id)
-            self.form = MonthlyTransactionForm(request.POST, instance=instance)
+        self.transaction_form = MonthlyTransactionForm(request.POST)
+        self.add_group_form = AddTransactionGroupForm(request.POST)
 
-        if self.form.is_valid():
-            self.form.instance.user = get_user()
-            self.form.save()
+        if transaction_id:
+            transaction = get_object_or_404(MonthlyTransaction, id=transaction_id)
+            self.transaction_form = MonthlyTransactionForm(request.POST, instance=transaction)
+
+        new_group = None
+        if self.add_group_form.is_valid():
+            new_group_name = self.add_group_form.cleaned_data['group_name']
+            if new_group_name:
+                new_group = self.add_group_form.save()
+            # TODO flash message
+
+        if self.transaction_form.is_valid():
+            self.transaction_form.instance.user = get_user()
+            if new_group:
+                self.transaction_form.instance.group = new_group
+
+            self.transaction_form.save()
             # TODO flash message
 
         return redirect('home')

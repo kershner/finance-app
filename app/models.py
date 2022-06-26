@@ -49,7 +49,7 @@ class CustomUser(AbstractUser):
         return self.get_transactions_by_group('ex')
 
     def get_investments_total(self):
-        investments = self.get_transactions('ex').filter(group__name='Investment').all()
+        investments = self.get_transactions('ex').filter(group__group_name='Investment').all()
         return investments.aggregate(Sum('amount'))['amount__sum']
 
     def get_monthly_transaction_total(self, transaction_type):
@@ -118,11 +118,11 @@ TRANSACTION_TYPES = [
 
 
 class TransactionGroup(models.Model):
-    type = models.CharField(max_length=2, choices=TRANSACTION_TYPES, default='ex')
-    name = models.CharField(null=False, blank=False, max_length=100)
+    group_type = models.CharField(max_length=2, choices=TRANSACTION_TYPES, default='ex')
+    group_name = models.CharField(null=False, blank=False, max_length=100)
 
     def __str__(self):
-        return '{}'.format(self.name)
+        return '{}'.format(self.group_name)
 
     def total(self):
         all_transactions = MonthlyTransaction.objects\

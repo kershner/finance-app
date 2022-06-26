@@ -7,13 +7,19 @@
 
     <div class="edit-transaction-form-upper">
         <div data-action="close" class="edit-transaction-action form-close">X</div>
-        {% if transaction %}
         <div class="edit-transaction-form-controls">
+            {% if transaction %}
             <div class="edit-transaction-action" data-action="delete" data-id="{{ transaction.id }}">Delete</div>
+            {% endif %}
+            <div class="edit-transaction-action" data-action="add-group">Add Group</div>
          </div>
-        {% endif %}
     </div>
 
-    {{ form.as_p }}
+    {{ transaction_form.as_p }}
+
+    <div class="add-group-form-wrapper hidden">
+        {{ add_group_form.as_p }}
+    </div>
+
     <button class="edit-transaction-form-submit" type="submit">Submit</button>
 </form>

@@ -45,12 +45,16 @@ jsConfig.editTransactionClickEvent = function() {
 // Add transaction click event
 jsConfig.addTransactionClickEvent = function() {
     document.querySelector('.add-transaction-btn').addEventListener('click', function(e) {
-        let existingForm = document.querySelector('.edit-transaction-form');
-        if (!existingForm) {
-            fetchWrapper(jsConfig.editTransactionsUrl, 'get', {}, function(data) {
-                jsConfig.addEditTransactionForm(e.target, data);
-            });
+        let existingForms = document.querySelectorAll('.edit-transaction-form');
+        if (existingForms) {
+            for (const form of existingForms) {
+                form.remove()
+            }
         }
+
+        fetchWrapper(jsConfig.editTransactionsUrl, 'get', {}, function(data) {
+            jsConfig.addEditTransactionForm(e.target, data);
+        });
     });
 };
 
@@ -69,22 +73,26 @@ jsConfig.addEditTransactionForm = function(transactionRow, data) {
         });
     });
 
-    // TODO - left off here, want to be able to add new groups from the Edit Transaction Menu
-    wrapperDiv.querySelector('select[name="group"]').addEventListener('change', function(e) {
-        let select = e.target;
-        console.log(select.value);
-        console.log(typeof(select.value));
-    });
-
     document.body.appendChild(wrapperDiv);
 };
 
 jsConfig.editTransactionFormAction = function(controlDiv) {
     let action = controlDiv.dataset.action;
-    if (action === 'close') {
-        // TODO - need to remove .edit-transaction-form's PARENT node
-        controlDiv.closest('.edit-transaction-form').remove();
-        return;
+    switch (action) {
+        case 'close':
+            // TODO - need to remove .edit-transaction-form's PARENT node
+            controlDiv.closest('.edit-transaction-form').remove();
+            return;
+            break;
+        case 'add-group':
+            alert('ADD GROUP');
+            return;
+            break;
+        case 'delete':
+            if (!confirm('Are you sure you\'d like to delete this transaction?')) {
+                return;
+            }
+            break;
     }
 
     let params = {

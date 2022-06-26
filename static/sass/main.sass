@@ -247,7 +247,8 @@ body, html
 
   .edit-transaction-form-upper
     display: flex
-    flex-direction: column
+    justify-content: space-between
+    flex-direction: row-reverse
     font-size: .6em
 
     .edit-transaction-form-controls
@@ -280,6 +281,10 @@ body, html
     input
       padding: 0.5em 0.25em
       @extend %generic-card-styling
+
+  .add-group-btn
+    margin-bottom: .5em
+    padding: 0.5em 0.75em
 
   .edit-transaction-form-submit
     width: 100%
