@@ -46,7 +46,7 @@ class EditTransactionView(View):
         if transaction_id:
             transaction = MonthlyTransaction.objects.get(id=transaction_id)
             self.transaction_form = MonthlyTransactionForm(instance=transaction)
-            self.add_group_form = AddTransactionGroupForm(instance=transaction.group)
+            self.add_group_form = AddTransactionGroupForm(instance=transaction.group, initial={'group_name': ''})
             ctx['transaction'] = transaction
 
         ctx['transaction_form'] = self.transaction_form
@@ -67,12 +67,13 @@ class EditTransactionView(View):
             new_group_name = self.add_group_form.cleaned_data['group_name']
             if new_group_name:
                 new_group = self.add_group_form.save()
-            # TODO flash message
+                # TODO flash message
 
         if self.transaction_form.is_valid():
             self.transaction_form.instance.user = get_user()
             if new_group:
                 self.transaction_form.instance.group = new_group
+                self.transaction_form.instance.type = new_group.group_type
 
             self.transaction_form.save()
             # TODO flash message

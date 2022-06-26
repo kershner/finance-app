@@ -45,5 +45,4 @@ class TransactionGroupAdmin(admin.ModelAdmin):
     list_per_page = 100
 
 
-admin.site.enable_nav_sidebar = False
 admin.site.site_header = MainAppConfig.verbose_name

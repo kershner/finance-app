@@ -85,7 +85,8 @@ jsConfig.editTransactionFormAction = function(controlDiv) {
             return;
             break;
         case 'add-group':
-            alert('ADD GROUP');
+            // Unhide the add group form, hide transaction group inputs
+            jsConfig.toggleAddGroupForm(controlDiv);
             return;
             break;
         case 'delete':
@@ -102,4 +103,40 @@ jsConfig.editTransactionFormAction = function(controlDiv) {
     fetchWrapper(jsConfig.editTransactionActonUrl, 'post', params, function() {
         location.reload();
     });
+};
+
+jsConfig.toggleAddGroupForm = function(controlDiv) {
+    let showForm = !hasClass(controlDiv, 'active');
+    let addFromWrapper = document.querySelector('.add-group-form-wrapper');
+    let groupNameInput = document.querySelector('input[name="group_name"]');
+
+    jsConfig.showHideTransactionTypeSelects(showForm);
+    if (showForm) {
+        removeClass(addFromWrapper, 'hidden');
+        addClass(controlDiv, 'active');
+        groupNameInput.required = true;
+    }   else {
+        addClass(addFromWrapper, 'hidden');
+        removeClass(controlDiv, 'active');
+        groupNameInput.required = false;
+    }
+};
+
+jsConfig.showHideTransactionTypeSelects = function(show) {
+    let transactionGroupSelect = document.querySelector('select[name="group"]');
+    let transactionTypeSelect = document.querySelector('select[name="type"]');
+    if (transactionGroupSelect) {
+        if (show) {
+            addClass(transactionGroupSelect.parentNode, 'hidden');
+        } else {
+            removeClass(transactionGroupSelect.parentNode, 'hidden');
+        }
+    }
+    if (transactionTypeSelect) {
+        if (show) {
+            addClass(transactionTypeSelect.parentNode, 'hidden');
+        } else {
+            removeClass(transactionTypeSelect.parentNode, 'hidden');
+        }
+    }
 };

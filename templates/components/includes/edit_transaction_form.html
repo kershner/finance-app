@@ -15,10 +15,14 @@
          </div>
     </div>
 
-    {{ transaction_form.as_p }}
-
-    <div class="add-group-form-wrapper hidden">
+    <div class="add-group-form-wrapper form-group hidden">
+        <div class="form-title">Add New Group</div>
         {{ add_group_form.as_p }}
+    </div>
+
+    <div class="add-group-form-wrapper form-group">
+        <div class="form-title">{% if transaction %}Edit{% else %}Add{% endif %} Transaction</div>
+    {{ transaction_form.as_p }}
     </div>
 
     <button class="edit-transaction-form-submit" type="submit">Submit</button>

@@ -184,7 +184,7 @@ body, html {
   margin: 0.5em auto;
 }
 
-.edit-transaction-form p select,
+.edit-transaction-form .form-group, .edit-transaction-form p select,
 .edit-transaction-form p input, .edit-transaction-form {
   padding: 0.25em 0.5em;
   background-color: white;
@@ -265,9 +265,21 @@ body, html {
 .edit-transaction-form p input {
   padding: 0.5em 0.25em;
 }
+.edit-transaction-form p select.readonly,
+.edit-transaction-form p input.readonly {
+  pointer-events: none;
+  color: #ced4da;
+}
 .edit-transaction-form .add-group-btn {
   margin-bottom: 0.5em;
   padding: 0.5em 0.75em;
+}
+.edit-transaction-form .form-group {
+  margin: 0.5em auto;
+}
+.edit-transaction-form .form-group .form-title {
+  text-align: right;
+  font-size: 0.8em;
 }
 .edit-transaction-form .edit-transaction-form-submit {
   width: 100%;

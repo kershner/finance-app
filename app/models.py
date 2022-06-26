@@ -140,7 +140,7 @@ class MonthlyTransaction(models.Model):
     type = models.CharField(max_length=2, choices=TRANSACTION_TYPES, default='ex')
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, blank=True, null=True)
     name = models.CharField(null=False, blank=False, max_length=100)
-    group = models.ForeignKey(TransactionGroup, on_delete=models.SET_NULL, blank=True, null=True)
+    group = models.ForeignKey(TransactionGroup, on_delete=models.SET(1), default=1)
     amount = models.DecimalField(max_digits=14, decimal_places=2)
     multiplier = models.IntegerField(default=1)
     muted = models.BooleanField(default=False)
