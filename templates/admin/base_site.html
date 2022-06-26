@@ -1,5 +1,10 @@
 {% extends 'admin/base_site.html' %}
-{% load i18n %}
+{% load i18n static %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/extra_admin.css' %}">
+{% endblock %}
 
 {% block userlinks %}
     {% if site_url %}

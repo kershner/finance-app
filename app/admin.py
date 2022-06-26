@@ -28,11 +28,13 @@ class CustomUserAdmin(admin.ModelAdmin):
     list_per_page = 100
     inlines = [MonthlyIncomeTransactionsInline, MonthlyExpenseTransactionsInline]
     fields = ['first_name', 'last_name', 'birth_date', 'starting_value']
+    save_on_top = True
 
-    class Media:
-        css = {
-             'all': ('css/extra_admin.css',)
-        }
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(MonthlyTransaction)
