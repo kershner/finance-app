@@ -14,8 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from .views import HomeView, EditTransactionView, EditTransactionActionView
+from django.views.static import serve
+from django.urls import path, re_path
+from django.shortcuts import redirect
+from django.conf import settings
 from django.contrib import admin
-from django.urls import path
+
+
+def custom_error_redirect(request, exception=None):
+    return redirect('home')
 
 
 urlpatterns = [
@@ -24,4 +31,10 @@ urlpatterns = [
     path('edit-transaction', EditTransactionView.as_view(), name='edit-transaction'),
     path('edit-transaction/<transaction_id>', EditTransactionView.as_view(), name='edit-transaction'),
     path('edit-transaction-action', EditTransactionActionView.as_view(), name='edit-transaction-action'),
+
+    # Continue serving static files even with debug = False
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
 ]
+
+handler404 = custom_error_redirect
+handler500 = custom_error_redirect
