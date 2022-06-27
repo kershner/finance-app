@@ -20,6 +20,7 @@ class CustomUser(AbstractUser):
                                          help_text='A value to start the calculations with, like a checking '
                                                    'account balance.')
     accent_color = ColorField(default='#9400d3', help_text='Used throughout the app\'s UI.')
+    dark_mode = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = 'User'

@@ -35,7 +35,7 @@ class MonthlyExpenseTransactionsInline(MonthlyTransactionInline):
 
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
-    fields = ['name', 'birth_date', 'starting_value', 'accent_color']
+    fields = ['name', 'birth_date', 'starting_value', 'accent_color', 'dark_mode']
     save_on_top = True
     inlines = [MonthlyIncomeTransactionsInline, MonthlyExpenseTransactionsInline]
     change_form_template = 'admin/custom_change_form.html'

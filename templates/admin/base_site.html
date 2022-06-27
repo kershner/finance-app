@@ -6,6 +6,12 @@
     <link rel="stylesheet" href="{% static 'css/extra_admin.css' %}">
 {% endblock %}
 
+{% block extrastyle %}
+    {% if not request.user.dark_mode %}
+    <link rel="stylesheet" type="text/css" href="{% static 'django_light/django_light.css' %}" />
+    {% endif %}
+{% endblock extrastyle %}
+
 {% block userlinks %}
     {% if site_url %}
         <a href="{{ site_url }}">{% translate 'View site' %}</a>

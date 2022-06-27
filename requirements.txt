@@ -2,6 +2,7 @@ asgiref==3.4.1
 Babel==2.10.3
 Django==3.2.13
 django-colorfield==0.7.1
+django-light==0.1.0.post3
 Pillow==8.4.0
 py-moneyed==1.2
 python-dateutil==2.8.2
