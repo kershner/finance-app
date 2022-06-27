@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from dateutil.relativedelta import relativedelta
+from colorfield.fields import ColorField
 from datetime import timedelta, date
 from django.db.models import Sum, F
 from django.urls import reverse
@@ -18,6 +19,7 @@ class CustomUser(AbstractUser):
                                          blank=True,
                                          help_text='A value to start the calculations with, like a checking '
                                                    'account balance.')
+    accent_color = ColorField(default='#9400d3', help_text='Used throughout the app\'s UI.')
 
     class Meta:
         verbose_name_plural = 'User'
