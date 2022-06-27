@@ -16,13 +16,8 @@ Including another URLconf
 from .views import HomeView, EditTransactionView, EditTransactionActionView
 from django.views.static import serve
 from django.urls import path, re_path
-from django.shortcuts import redirect
 from django.conf import settings
 from django.contrib import admin
-
-
-def custom_error_redirect(request, exception=None):
-    return redirect('home')
 
 
 urlpatterns = [
@@ -35,6 +30,3 @@ urlpatterns = [
     # Continue serving static files even with debug = False
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
 ]
-
-handler404 = custom_error_redirect
-handler500 = custom_error_redirect
