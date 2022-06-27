@@ -10,13 +10,17 @@ import math
 
 class CustomUser(AbstractUser):
     name = models.CharField(default='Your Name', max_length=100, null=False, blank=False)
-    birth_date = models.DateField(null=True, blank=True)
+    birth_date = models.DateField(null=True, blank=True, help_text='Used to extrapolate your age for '
+                                                                   'calculations in the future.')
     starting_value = models.DecimalField(max_digits=14,
                                          decimal_places=2,
                                          null=True,
                                          blank=True,
                                          help_text='A value to start the calculations with, like a checking '
                                                    'account balance.')
+
+    class Meta:
+        verbose_name_plural = 'User'
 
     def get_admin_url(self):
         app, model = (self._meta.app_label, self._meta.model_name)
@@ -149,7 +153,7 @@ class TransactionGroup(models.Model):
 
 class MonthlyTransaction(models.Model):
     type = models.CharField(max_length=2, choices=TRANSACTION_TYPES, default='ex')
-    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey(CustomUser, default=1, on_delete=models.SET_NULL, blank=True, null=True)
     name = models.CharField(null=False, blank=False, max_length=100)
     group = models.ForeignKey(TransactionGroup, on_delete=models.SET(1), default=1)
     amount = models.DecimalField(max_digits=14, decimal_places=2)

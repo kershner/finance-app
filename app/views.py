@@ -1,17 +1,15 @@
 from .forms import MonthlyTransactionForm, AddTransactionGroupForm
-from .models import MonthlyTransaction, CustomUser
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
+from .util import get_user, setup_db_first_time
 from django.shortcuts import get_object_or_404
+from .models import MonthlyTransaction
 from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.http import JsonResponse
-from django.utils import timezone
-from django.urls import reverse
 from django.views import View
-from .util import get_user
 import json
 
 
@@ -38,21 +36,7 @@ class HomeView(View):
             })
         else:
             request.session['new_user'] = True
-
-            # Create dummy user on first startup
-            user = CustomUser.objects.create(
-                username='new_user',
-                first_name='First Name',
-                last_name='Last Name',
-                birth_date=timezone.now(),
-                starting_value=0,
-                is_staff=True,
-                is_superuser=True,
-                is_active=True
-            )
-            user.set_password('admin')
-            user.save()
-
+            user = setup_db_first_time()
             login(request, user)
 
             # Redirect to admin page for the user
