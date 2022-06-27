@@ -1,0 +1,14 @@
+{% extends 'admin/change_form.html' %}
+
+{% block object-tools %}
+    {{ block.super }}
+
+    {% if request.session.new_user %}
+    <div class="welcome-blurb">
+        <p class="welcome-title">Welcome to this little finance app!</p>
+        <p>To get started, fill in the form below with some quick information.</p>
+        <p>When you've got a good start, click "View Site" or the "Finance by Month" text in the top left.</p>
+        <p><a href="/">View Site</a></p>
+    </div>
+    {% endif %}
+{% endblock %}

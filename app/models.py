@@ -2,14 +2,25 @@ from django.contrib.auth.models import AbstractUser
 from dateutil.relativedelta import relativedelta
 from datetime import timedelta, date
 from django.db.models import Sum, F
+from django.urls import reverse
 from django.db import models
 from decimal import Decimal
 import math
 
 
 class CustomUser(AbstractUser):
+    name = models.CharField(default='Your Name', max_length=100, null=False, blank=False)
     birth_date = models.DateField(null=True, blank=True)
-    starting_value = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
+    starting_value = models.DecimalField(max_digits=14,
+                                         decimal_places=2,
+                                         null=True,
+                                         blank=True,
+                                         help_text='A value to start the calculations with, like a checking '
+                                                   'account balance.')
+
+    def get_admin_url(self):
+        app, model = (self._meta.app_label, self._meta.model_name)
+        return reverse('admin:{}_{}_change'.format(app, model), args=(self.pk,))
 
     def get_current_age(self):
         return math.floor((date.today() - self.birth_date).days / 365)
@@ -87,7 +98,7 @@ class CustomUser(AbstractUser):
             net_income = income_calcs['net_monthly_income'] * month
             new_total = self.starting_value + net_income
             new_age = self.get_years_old_from_num_months(num_months=month)
-            investment = total_monthly_investment * month
+            investment = (total_monthly_investment * month) if total_monthly_investment else 0.0
 
             years_rounded = round(month / 12, 2)
             years_plural = 's' if years_rounded != 1.00 else ''
@@ -142,8 +153,14 @@ class MonthlyTransaction(models.Model):
     name = models.CharField(null=False, blank=False, max_length=100)
     group = models.ForeignKey(TransactionGroup, on_delete=models.SET(1), default=1)
     amount = models.DecimalField(max_digits=14, decimal_places=2)
-    multiplier = models.IntegerField(default=1)
-    muted = models.BooleanField(default=False)
+    multiplier = models.IntegerField(default=1, help_text='Amount will be multiplied by this value for a final '
+                                                          'total when this field is used in calculations.  '
+                                                          'This can be useful to track recurring expenses throughout '
+                                                          'the month, like groceries every week etc.')
+    muted = models.BooleanField(default=False, help_text='This checkbox allows you to temporarily "mute" a transaction '
+                                                         'from appearing in any calcuations.  Useful to get a quick '
+                                                         'idea of what your net income would look like without a '
+                                                         'particular transaction.')
 
     def __str__(self):
         return '{}'.format(self.name)

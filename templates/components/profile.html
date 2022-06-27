@@ -2,13 +2,18 @@
 
 <div class="component">
     <div class="profile-section">
+
         <div class="component-title">
-            <span>{{ user.first_name }}</span>
-            <span>{{ user.last_name }}</span>
+            <span>{{ user.name }}</span>
             <a class="admin-edit-link" href="{% url 'admin:app_customuser_change' user.id %}">Edit</a>
         </div>
 
         <div class="section-content">
+            <div class="value-with-label">
+                <p>{% now "M d, Y" %}</p>
+                <p>Today</p>
+            </div>
+
             <div class="value-with-label">
                 <p>{{ user.get_current_age }}</p>
                 <p>Age</p>

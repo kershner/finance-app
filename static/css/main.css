@@ -20,6 +20,10 @@ button.active, .edit-transaction-form .edit-transaction-form-upper .active.form-
   color: white;
 }
 
+.helptext {
+  display: none;
+}
+
 body, html {
   color: #525252;
 }
@@ -47,14 +51,14 @@ body, html {
   flex: 1;
 }
 .middle-section .transactions-body .transactions-list .transaction-list-title {
-  margin-top: 0.5em;
+  margin: 0.5em 0;
   padding: 0.2em 1em;
   border-radius: 0.75em;
   background-color: #9400d3;
   color: white;
 }
 .middle-section .transactions-body .transactions-list .transaction-group {
-  margin: 0.5em 0;
+  margin: 0;
 }
 .middle-section .transactions-body .transactions-list .transaction-group .transaction-group-title {
   font-weight: bold;
@@ -97,6 +101,7 @@ body, html {
   align-items: center;
   flex-direction: row-reverse;
   width: 100%;
+  margin: 0.5em 0;
 }
 .middle-section .transaction-controls div {
   font-size: 0.7em;

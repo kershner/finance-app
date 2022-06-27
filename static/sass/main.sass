@@ -30,6 +30,9 @@ button
     background-color: $purple
     color: white
 
+.helptext
+  display: none
+
 body, html
   @extend %no-padding-margin
   @extend %main-font
@@ -56,7 +59,7 @@ body, html
       flex: 1
 
       .transaction-list-title
-        margin-top: 0.5em
+        margin: 0.5em 0
         padding: 0.2em 1em
         border-radius: .75em
         background-color: $purple
@@ -65,7 +68,7 @@ body, html
         @extend %box-shadow
 
       .transaction-group
-        margin: .5em 0
+        margin: 0
 
         .transaction-group-title
           font-weight: bold
@@ -110,6 +113,7 @@ body, html
     align-items: center
     flex-direction: row-reverse
     width: 100%
+    margin: 0.5em 0
 
     div
       @extend button

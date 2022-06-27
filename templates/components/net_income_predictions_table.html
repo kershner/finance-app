@@ -20,9 +20,11 @@
         <tr class="predictions-headers">
             <th>Time From Now</th>
             <th>Date</th>
-            <th>{{ user.first_name }}'s Age</th>
+            <th>{{ user.name }}'s Age</th>
             <th>New Total</th>
+            {% if row.investment  %}
             <th>Investment</th>
+            {% endif %}
             <th>Net Income</th>
         </tr>
 
@@ -32,7 +34,9 @@
             <td>{{ row.date_string }}</td>
             <td>{{ row.new_age }}</td>
             <td>{{ row.new_total|money_format }}</td>
+            {% if row.investment  %}
             <td>{{ row.investment|money_format }}</td>
+            {% endif %}
             <td>{{ row.net_income|money_format }}</td>
         </tr>
         {% endfor %}
