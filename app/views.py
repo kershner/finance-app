@@ -60,7 +60,7 @@ class EditFormView(View):
                 self.form = TransactionGroupForm(instance=obj)
             else:
                 self.form = MonthlyTransactionForm(instance=obj)
-                self.add_group_form = TransactionGroupForm(instance=obj.group, initial={'group_name': ''})
+                self.add_group_form = TransactionGroupForm(instance=obj.group)
 
             ctx['add_group_form'] = self.add_group_form
             ctx['object'] = obj
@@ -86,13 +86,14 @@ class EditFormView(View):
                 self.form = TransactionGroupForm(request.POST, instance=obj)
             else:
                 self.form = MonthlyTransactionForm(request.POST, instance=obj)
-                self.add_group_form = TransactionGroupForm(request.POST, instance=obj.group, initial={'group_name': ''})
+                self.add_group_form = TransactionGroupForm(request.POST, instance=obj.group)
 
         # Determine if user added a new group
         new_group = None
         if self.add_group_form.is_valid():
             new_group_name = self.add_group_form.cleaned_data['group_name']
-            if new_group_name:
+            new_group_exists = TransactionGroup.objects.filter(group_name=new_group_name).exists()
+            if new_group_name and not new_group_exists:
                 new_group = self.add_group_form.save()
                 # TODO flash message
 
