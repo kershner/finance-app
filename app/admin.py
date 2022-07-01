@@ -69,9 +69,9 @@ class MonthlyTransactionAdmin(admin.ModelAdmin):
 @admin.register(TransactionGroup)
 class TransactionGroupAdmin(admin.ModelAdmin):
     list_per_page = 100
-    list_display = ('group_name', 'group_type')
+    list_display = ('group_name', 'group_type', 'muted')
     list_display_links = list_display
-    list_filter = ['group_type', 'group_name']
+    list_filter = ['group_type', 'group_name', 'muted']
     sortable_by = list_display
     search_fields = ['group_name']
     save_on_top = True

@@ -23,6 +23,9 @@
   border-radius: .25em
   border: 1px solid $grey
 
+.flex-horizontal
+  align-self: flex-start
+
 // Value with label
 .value-with-label
   display: flex
@@ -62,17 +65,17 @@
       border-radius: .75em
 
 // Edit Transaction Form
-.edit-transaction-form
+.edit-form
   padding: 0.5em
   @extend %generic-card-styling
 
-  .edit-transaction-form-upper
+  .edit-form-upper
     display: flex
     justify-content: space-between
     flex-direction: row-reverse
     font-size: .6em
 
-    .edit-transaction-form-controls
+    .edit-form-controls
       display: flex
       justify-content: center
       div
@@ -119,5 +122,5 @@
       text-align: right
       font-size: 0.8em
 
-  .edit-transaction-form-submit
+  .edit-form-submit
     width: 100%

@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from dateutil.relativedelta import relativedelta
+from django.db.models.signals import pre_save
 from colorfield.fields import ColorField
+from django.dispatch import receiver
 from datetime import timedelta, date
 from django.db.models import Sum, F
 from django.urls import reverse
@@ -135,7 +137,32 @@ TRANSACTION_TYPES = [
 ]
 
 
-class TransactionGroup(models.Model):
+class MutedFieldMixin(models.Model):
+    class Meta:
+        abstract = True
+
+    muted = models.BooleanField(default=False, help_text='This checkbox allows you to temporarily "mute" a transaction '
+                                                         'from appearing in any calculations.  Useful to get a quick '
+                                                         'idea of what your net income would look like without a '
+                                                         'particular transaction.')
+    __original_muted = None
+
+    def __init__(self, *args, **kwargs):
+        super(MutedFieldMixin, self).__init__(*args, **kwargs)
+        self.__original_muted = self.muted
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        # If muting or unmuting group, mute/unmute all group's transactions
+        if self.muted != self.__original_muted:
+            if isinstance(self, TransactionGroup):
+                all_transactions = MonthlyTransaction.objects.filter(group=self).all()
+                all_transactions.update(muted=self.muted)
+
+        super(MutedFieldMixin, self).save(force_insert, force_update, *args, **kwargs)
+        self.__original_muted = self.muted
+
+
+class TransactionGroup(MutedFieldMixin):
     group_type = models.CharField(max_length=2, choices=TRANSACTION_TYPES, default='ex')
     group_name = models.CharField(null=False, blank=False, max_length=100)
 
@@ -154,7 +181,7 @@ class TransactionGroup(models.Model):
         return total
 
 
-class MonthlyTransaction(models.Model):
+class MonthlyTransaction(MutedFieldMixin):
     type = models.CharField(max_length=2, choices=TRANSACTION_TYPES, default='ex')
     user = models.ForeignKey(CustomUser, default=1, on_delete=models.SET_NULL, blank=True, null=True)
     name = models.CharField(null=False, blank=False, max_length=100)
@@ -164,10 +191,6 @@ class MonthlyTransaction(models.Model):
                                                           'total when this field is used in calculations.  '
                                                           'This can be useful to track recurring expenses throughout '
                                                           'the month, like groceries every week etc.')
-    muted = models.BooleanField(default=False, help_text='This checkbox allows you to temporarily "mute" a transaction '
-                                                         'from appearing in any calcuations.  Useful to get a quick '
-                                                         'idea of what your net income would look like without a '
-                                                         'particular transaction.')
 
     def __str__(self):
         return '{}'.format(self.name)

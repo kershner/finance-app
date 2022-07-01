@@ -1,64 +1,53 @@
 let jsConfig = {
-    'editTransactionsUrl': '',
-    'editTransactionActonUrl': ''
+    'editFormUrl': '',
+    'editFormActionUrl': ''
 };
 
 jsConfig.init = function() {
-    jsConfig.editTransactionClickEvent();
-    jsConfig.addTransactionClickEvent();
+    jsConfig.editClickEvent();
 };
 
 // Edit transaction click event
-jsConfig.editTransactionClickEvent = function() {
-    document.querySelectorAll('.transaction').forEach(function(e) {
+jsConfig.editClickEvent = function() {
+    document.querySelectorAll('.editable').forEach(function(e) {
         e.addEventListener('click', function(e) {
-            let transactionRow = e.target;
-            let transactionId = transactionRow.dataset.id;
+            let target = e.target;
+            let targetId = target.dataset.id;
+            let targetType = target.dataset.type;
 
-            if (transactionId === undefined) {
-                transactionRow = transactionRow.closest('.transaction');
-                transactionId = transactionRow.dataset.id;
+            if (targetId === undefined) {
+                target = target.closest('[data-id]');
+                targetId = target.dataset.id;
+                targetType = target.dataset.type;
             }
 
-            if (!transactionId) {
+            if (!targetId) {
                 return;
             }
 
             // Remove existing forms
             let clickingExistingForm = false;
-            document.querySelectorAll(`.edit-transaction-form`).forEach(function(e) {
-                clickingExistingForm =  transactionId === e.dataset.id;
+            document.querySelectorAll(`.edit-form`).forEach(function(e) {
+                clickingExistingForm =  targetId === e.dataset.id;
                 e.remove()
             });
 
+            let fullEndpoint = `${jsConfig.editFormUrl}/${targetId}/${targetType}`;
+            if (targetId === 'add') {
+                fullEndpoint = jsConfig.editFormUrl;
+            }
+
             // Only show the form is user is not clicking on same form that's already open (UX shortcut)
             if (!clickingExistingForm) {
-                let fullEndpoint = `${jsConfig.editTransactionsUrl}/${transactionId}`;
                 fetchWrapper(fullEndpoint, 'get', {}, function(data) {
-                    jsConfig.addEditTransactionForm(transactionRow, data);
+                    jsConfig.addEditForm(target, data);
                 });
             }
         });
     });
 };
 
-// Add transaction click event
-jsConfig.addTransactionClickEvent = function() {
-    document.querySelector('.add-transaction-btn').addEventListener('click', function(e) {
-        let existingForms = document.querySelectorAll('.edit-transaction-form');
-        if (existingForms) {
-            for (const form of existingForms) {
-                form.remove()
-            }
-        }
-
-        fetchWrapper(jsConfig.editTransactionsUrl, 'get', {}, function(data) {
-            jsConfig.addEditTransactionForm(e.target, data);
-        });
-    });
-};
-
-jsConfig.addEditTransactionForm = function(transactionRow, data) {
+jsConfig.addEditForm = function(transactionRow, data) {
     let top = `${transactionRow.offsetTop + transactionRow.offsetHeight}px`;
     let left = `${transactionRow.offsetLeft}px`;
     let wrapperDiv = document.createElement('div');
@@ -66,22 +55,22 @@ jsConfig.addEditTransactionForm = function(transactionRow, data) {
     wrapperDiv.innerHTML = data.html;
 
     // Add click events to control divs
-    let controlDivs = wrapperDiv.querySelectorAll('.edit-transaction-action');
+    let controlDivs = wrapperDiv.querySelectorAll('.edit-form-action');
     controlDivs.forEach(function(e) {
         e.addEventListener('click', function(e) {
-            jsConfig.editTransactionFormAction(e.target);
+            jsConfig.editFormAction(e.target);
         });
     });
 
     document.body.appendChild(wrapperDiv);
 };
 
-jsConfig.editTransactionFormAction = function(controlDiv) {
+jsConfig.editFormAction = function(controlDiv) {
     let action = controlDiv.dataset.action;
     switch (action) {
         case 'close':
-            // TODO - need to remove .edit-transaction-form's PARENT node
-            controlDiv.closest('.edit-transaction-form').remove();
+            // TODO - need to remove .edit-form's PARENT node
+            controlDiv.closest('.edit-form').remove();
             return;
             break;
         case 'add-group':
@@ -90,7 +79,7 @@ jsConfig.editTransactionFormAction = function(controlDiv) {
             return;
             break;
         case 'delete':
-            if (!confirm('Are you sure you\'d like to delete this transaction?')) {
+            if (!confirm(`Are you sure you\'d like to delete this ${controlDiv.dataset.type}?`)) {
                 return;
             }
             break;
@@ -98,9 +87,10 @@ jsConfig.editTransactionFormAction = function(controlDiv) {
 
     let params = {
         'action': action,
-        'transactionId': controlDiv.dataset.id
+        'objectId': controlDiv.dataset.id,
+        'objectType': controlDiv.dataset.type
     };
-    fetchWrapper(jsConfig.editTransactionActonUrl, 'post', params, function() {
+    fetchWrapper(jsConfig.editFormActionUrl, 'post', params, function() {
         location.reload();
     });
 };

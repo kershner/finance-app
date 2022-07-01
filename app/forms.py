@@ -9,13 +9,15 @@ class MonthlyTransactionForm(ModelForm):
         if self.instance.pk is not None:
             del self.fields['type']
 
+        self.fields['muted'].widget.attrs['class'] = 'flex-horizontal'
+
     class Meta:
         model = MonthlyTransaction
         fields = '__all__'
         exclude = ['user']
 
 
-class AddTransactionGroupForm(ModelForm):
+class TransactionGroupForm(ModelForm):
     group_name = CharField(required=False)
 
     class Meta:
@@ -24,9 +26,11 @@ class AddTransactionGroupForm(ModelForm):
         exclude = ['user']
 
     def __init__(self, *args, **kwargs):
-        super(AddTransactionGroupForm, self).__init__(*args, **kwargs)
+        super(TransactionGroupForm, self).__init__(*args, **kwargs)
         if self.instance.pk is not None:
             self.fields['group_type'].widget.attrs['class'] = 'readonly'
+
+        self.fields['muted'].widget.attrs['class'] = 'flex-horizontal'
 
 
 class MonthlyTransactionsInlineForm(ModelForm):

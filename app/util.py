@@ -44,3 +44,17 @@ def setup_db_first_time():
     user.save()
 
     return user
+
+
+def get_model(object_type):
+    from .models import MonthlyTransaction
+    from django.apps import apps
+
+    model = MonthlyTransaction
+    if object_type:
+        try:
+            model = apps.get_model('app', object_type)
+        except KeyError:
+            pass
+
+    return model

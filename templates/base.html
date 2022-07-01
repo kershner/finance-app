@@ -23,8 +23,8 @@
     <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
     <script type="text/javascript">
-        jsConfig.editTransactionsUrl = '{% url 'edit-transaction' %}';
-        jsConfig.editTransactionActonUrl = '{% url 'edit-transaction-action' %}';
+        jsConfig.editFormUrl = '{% url 'edit-form' %}';
+        jsConfig.editFormActionUrl = '{% url 'edit-form-action' %}';
         jsConfig.init();
     </script>
 </body>

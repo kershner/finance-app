@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from .views import HomeView, EditTransactionView, EditTransactionActionView
+from .views import HomeView, EditFormView, EditFormActionView
 from django.views.static import serve
 from django.urls import path, re_path
 from django.conf import settings
@@ -23,9 +23,9 @@ from django.contrib import admin
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', HomeView.as_view(), name='home'),
-    path('edit-transaction', EditTransactionView.as_view(), name='edit-transaction'),
-    path('edit-transaction/<transaction_id>', EditTransactionView.as_view(), name='edit-transaction'),
-    path('edit-transaction-action', EditTransactionActionView.as_view(), name='edit-transaction-action'),
+    path('edit-form', EditFormView.as_view(), name='edit-form'),
+    path('edit-form/<object_id>/<object_type>', EditFormView.as_view(), name='edit-form'),
+    path('edit-form-action', EditFormActionView.as_view(), name='edit-form-action'),
 
     # Continue serving static files even with debug = False
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),

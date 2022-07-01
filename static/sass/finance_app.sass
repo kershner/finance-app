@@ -7,6 +7,9 @@
     font-size: 0.6em
 
 /* Middle Section *****************************************************************************************************/
+%muted
+  color: $grey
+
 .middle-section
   .transactions-body
     display: flex
@@ -30,12 +33,15 @@
 
       .transaction-group
         margin: 0
+        &.muted
+          @extend %muted
 
         .transaction-group-title
           font-weight: bold
           text-align: left
           display: flex
           justify-content: space-between
+          cursor: pointer
 
         .transaction
           display: flex
@@ -45,8 +51,7 @@
             cursor: pointer
 
           &.muted
-            background-color: lighten($grey, 10)
-            color: $grey
+            @extend %muted
 
           &:hover:not(:last-child):not(.muted)
             background: $accent-color

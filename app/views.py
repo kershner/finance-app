@@ -1,14 +1,13 @@
-from .forms import MonthlyTransactionForm, AddTransactionGroupForm
+from .forms import MonthlyTransactionForm, TransactionGroupForm
+from .util import get_user, setup_db_first_time, get_model
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
-from .util import get_user, setup_db_first_time
-from django.shortcuts import get_object_or_404
-from .models import MonthlyTransaction
 from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.http import JsonResponse
+from .models import TransactionGroup
 from django.views import View
 import json
 
@@ -45,33 +44,51 @@ class HomeView(View):
         return TemplateResponse(request, 'base.html', ctx)
 
 
-class EditTransactionView(View):
-    transaction_form = MonthlyTransactionForm()
-    add_group_form = AddTransactionGroupForm()
+class EditFormView(View):
+    form = MonthlyTransactionForm()
+    add_group_form = None
     template = 'components/includes/edit_transaction_form.html'
 
-    def get(self, request, transaction_id=None):
+    def get(self, request, object_id=None, object_type=None):
         ctx = {}
+        model = get_model(object_type)
 
-        if transaction_id:
-            transaction = MonthlyTransaction.objects.get(id=transaction_id)
-            self.transaction_form = MonthlyTransactionForm(instance=transaction)
-            self.add_group_form = AddTransactionGroupForm(instance=transaction.group, initial={'group_name': ''})
-            ctx['transaction'] = transaction
+        if object_id:
+            obj = model.objects.get(id=object_id)
 
-        ctx['transaction_form'] = self.transaction_form
-        ctx['add_group_form'] = self.add_group_form
+            if isinstance(obj, TransactionGroup):
+                self.form = TransactionGroupForm(instance=obj)
+            else:
+                self.form = MonthlyTransactionForm(instance=obj)
+                self.add_group_form = TransactionGroupForm(instance=obj.group, initial={'group_name': ''})
+
+            ctx['add_group_form'] = self.add_group_form
+            ctx['object'] = obj
+        else:
+            ctx['add_group_form'] = TransactionGroupForm()
+
+        ctx['edit_form'] = self.form
         html = render_to_string(self.template, context=ctx, request=request)
         return JsonResponse({'success': True, 'html': html}, status=200)
 
-    def post(self, request, transaction_id=None):
-        self.transaction_form = MonthlyTransactionForm(request.POST)
-        self.add_group_form = AddTransactionGroupForm(request.POST)
+    def post(self, request, object_id=None, object_type=None):
+        # Get model and initial forms using data from the POST
+        model = get_model(object_type)
+        self.add_group_form = TransactionGroupForm(request.POST)
+        self.form = MonthlyTransactionForm(request.POST)
+        if model == TransactionGroup:
+            self.form = TransactionGroupForm(request.POST)
 
-        if transaction_id:
-            transaction = get_object_or_404(MonthlyTransaction, id=transaction_id)
-            self.transaction_form = MonthlyTransactionForm(request.POST, instance=transaction)
+        # Get reference to object if ID was provided
+        if object_id:
+            obj = model.objects.get(id=object_id)
+            if isinstance(obj, TransactionGroup):
+                self.form = TransactionGroupForm(request.POST, instance=obj)
+            else:
+                self.form = MonthlyTransactionForm(request.POST, instance=obj)
+                self.add_group_form = TransactionGroupForm(request.POST, instance=obj.group, initial={'group_name': ''})
 
+        # Determine if user added a new group
         new_group = None
         if self.add_group_form.is_valid():
             new_group_name = self.add_group_form.cleaned_data['group_name']
@@ -79,20 +96,21 @@ class EditTransactionView(View):
                 new_group = self.add_group_form.save()
                 # TODO flash message
 
-        if self.transaction_form.is_valid():
-            self.transaction_form.instance.user = get_user()
+        # Save the form/group
+        if self.form.is_valid():
+            self.form.instance.user = get_user()
             if new_group:
-                self.transaction_form.instance.group = new_group
-                self.transaction_form.instance.type = new_group.group_type
+                self.form.instance.group = new_group
+                self.form.instance.type = new_group.group_type
 
-            self.transaction_form.save()
+            self.form.save()
             # TODO flash message
 
         return redirect('home')
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class EditTransactionActionView(View):
+class EditFormActionView(View):
     @staticmethod
     def get():
         return JsonResponse({}, status=405)
@@ -101,13 +119,16 @@ class EditTransactionActionView(View):
     def post(request):
         try:
             body = json.loads(request.body)
-            transaction_id = body['transactionId']
+            object_id = body['objectId']
+            object_type = body['objectType']
             action = body['action']
 
-            transaction = MonthlyTransaction.objects.get(id=transaction_id)
+            model = get_model(object_type)
+            obj = model.objects.get(id=object_id)
+
             if action == 'delete':
                 # TODO flash message
-                transaction.delete()
+                obj.delete()
 
         except KeyError as e:
             return JsonResponse({'success': False, 'message': 'Incomplete payload, missing: {}'.format(e)})

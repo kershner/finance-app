@@ -9,13 +9,13 @@
         {% endif %}
     </div>
     {% for group, data in transaction_groups.items %}
-    <div class="transaction-group">
-        <div class="transaction-group-title">
-            <span>{{ group.group_name }}</span>
+    <div class="transaction-group {% if group.muted %}muted{% endif %}">
+        <div class="transaction-group-title editable" data-id="{{ group.id }}" data-type="TransactionGroup">
+            {{ group.group_name }} {% if group.muted %}(muted){% endif %}
         </div>
 
         {% for transaction in data.transactions %}
-        <div class="transaction {% if transaction.muted %}muted{% endif %}" data-id="{{ transaction.id }}">
+        <div class="transaction editable {% if transaction.muted %}muted{% endif %}" data-id="{{ transaction.id }}" data-type="MonthlyTransaction">
             <div class="transaction-name">
                 <p>{{ transaction }}</p>
             </div>

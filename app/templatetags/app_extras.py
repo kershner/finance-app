@@ -13,3 +13,8 @@ def money_format(value):
         value_str = '${:,.0f}'.format(value)
 
     return value_str
+
+
+@register.filter
+def class_name(value):
+    return value.__class__.__name__
