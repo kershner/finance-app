@@ -1,8 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from dateutil.relativedelta import relativedelta
-from django.db.models.signals import pre_save
 from colorfield.fields import ColorField
-from django.dispatch import receiver
 from datetime import timedelta, date
 from django.db.models import Sum, F
 from django.urls import reverse
@@ -23,6 +21,12 @@ class CustomUser(AbstractUser):
                                                    'account balance.')
     accent_color = ColorField(default='#9400d3', help_text='Used throughout the app\'s UI.')
     dark_mode = models.BooleanField(default=True)
+    toggle_raise = models.BooleanField(default=False, help_text='Toggle to use your raise percentage in income '
+                                                                'calculations after the first year.')
+    raise_pct = models.DecimalField(max_digits=4,
+                                    decimal_places=2,
+                                    default=Decimal(1.03),
+                                    verbose_name='Raise Percentage')
 
     class Meta:
         verbose_name_plural = 'User'
@@ -69,8 +73,13 @@ class CustomUser(AbstractUser):
         return self.get_transactions_by_group('ex')
 
     def get_investments_total(self):
-        investments = self.get_transactions('ex').filter(group__group_name='Investment').all()
+        investments = self.get_transactions('ex').filter(group__group_name='Investment', muted__exact=False).all()
         return investments.aggregate(Sum('amount'))['amount__sum']
+
+    def get_paychecks_total(self):
+        paycheck_group = TransactionGroup.objects.get(group_name='Employment')
+        paychecks = self.get_transactions_by_group('in')[paycheck_group]
+        return paychecks['group_total']
 
     def get_monthly_transaction_total(self, transaction_type):
         monthly_total = Decimal(0.0)
@@ -81,15 +90,29 @@ class CustomUser(AbstractUser):
                 monthly_total += transaction.amount * transaction.multiplier
         return monthly_total
 
-    def get_income_calculations(self):
+    def get_monthly_income_without_paycheck(self):
+        monthly_income = self.get_monthly_transaction_total('in')
+        paycheck_total = self.get_paychecks_total()
+        return monthly_income - paycheck_total
+
+    def get_income_calculations(self, years_to_project=1):
         total_monthly_income = self.get_monthly_transaction_total('in')
         total_monthly_expenses = self.get_monthly_transaction_total('ex')
         net_monthly_income = total_monthly_income - total_monthly_expenses
 
+        net_monthly_income_with_raise = net_monthly_income
+        if years_to_project > 1:
+            paycheck_total = self.get_paychecks_total()
+            income_without_paycheck = total_monthly_income - paycheck_total
+            for year in range(2, years_to_project + 1):
+                paycheck_total *= self.raise_pct
+                net_monthly_income_with_raise = (income_without_paycheck + paycheck_total) - total_monthly_expenses
+
         return {
             'total_monthly_income': total_monthly_income,
             'total_monthly_expenses': total_monthly_expenses,
-            'net_monthly_income': net_monthly_income
+            'net_monthly_income': net_monthly_income,
+            'net_monthly_income_with_raise': net_monthly_income_with_raise
         }
 
     def get_net_income_calculations(self, years_to_project=1):
@@ -98,7 +121,7 @@ class CustomUser(AbstractUser):
         total_months = years_to_project * 12
         step = int(years_to_project / 1)
         months = range(0, total_months + 1, step)
-        income_calcs = self.get_income_calculations()
+        income_calcs = self.get_income_calculations(years_to_project)
         total_monthly_investment = self.get_investments_total()
 
         net_income_calculations = []
@@ -110,8 +133,14 @@ class CustomUser(AbstractUser):
             investment = (total_monthly_investment * month) if total_monthly_investment else 0.0
 
             years_rounded = round(month / 12, 2)
+            current_year = math.floor(years_rounded) + 1
             years_plural = 's' if years_rounded != 1.00 else ''
             years_string = '{:.2g} year{}'.format(years_rounded, years_plural)
+
+            if self.toggle_raise and current_year > 1:
+                net_income_with_raise = net_income
+                net_income = math.floor(net_income_with_raise * self.raise_pct)
+                new_total = math.floor(new_total * self.raise_pct)
 
             months_plural = 's' if month != 1 else ''
             time_from_now_string = '{} month{}'.format(month, months_plural)
@@ -120,6 +149,7 @@ class CustomUser(AbstractUser):
                 time_from_now_string = years_string
 
             net_income_calculations.append({
+                'years_from_now': years_rounded,
                 'time_from_now': time_from_now_string,
                 'date_string': date_string,
                 'net_income': net_income,

@@ -31,6 +31,7 @@ class HomeView(View):
 
             ctx.update({
                 'user': user,
+                'income_calculations': user.get_income_calculations(years_to_project=years),
                 'net_income_calculations': user.get_net_income_calculations(years_to_project=years)
             })
         else:

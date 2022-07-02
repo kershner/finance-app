@@ -4,18 +4,30 @@
     <div class="stats-section">
         <div class="section-content">
             <div class="value-with-label">
-                <p>{{ user.get_income_calculations.total_monthly_income|money_format }}</p>
+                <p>{{ income_calculations.total_monthly_income|money_format }}</p>
                 <p>Total Monthly Income</p>
             </div>
 
             <div class="value-with-label">
-                <p>{{ user.get_income_calculations.total_monthly_expenses|money_format }}</p>
+                <p>{{ income_calculations.total_monthly_expenses|money_format }}</p>
                 <p>Total Monthly Expenses</p>
             </div>
 
             <div class="value-with-label">
-                <p>{{ user.get_income_calculations.net_monthly_income|money_format }}</p>
-                <p>Net Monthly Income</p>
+                <p>
+                    {% if user.toggle_raise and years_to_project > 1 %}
+                        {{ income_calculations.net_monthly_income_with_raise|money_format }}
+                    {% else %}
+                        {{ income_calculations.net_monthly_income|money_format }}
+                    {% endif %}
+                </p>
+                <p>Net Monthly Income
+                    {% if user.toggle_raise and years_to_project > 1 %}
+                        <span class="with-raise-header">
+                            (with {{ user.raise_pct }}% raise)
+                        </span>
+                    {% endif %}
+                </p>
             </div>
         </div>
     </div>

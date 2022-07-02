@@ -124,3 +124,50 @@
 
   .edit-form-submit
     width: 100%
+
+.with-raise-header
+  display: block
+  font-size: 0.8em
+  font-weight: normal
+
+.with-raise-marker
+  padding: .25em
+  padding-left: 0
+  font-size: 1.5em
+  line-height: 0
+  vertical-align: middle
+  font-weight: bold
+
+.tooltip
+  cursor: help
+  position: relative
+
+  &:hover:before,
+  &:hover:after
+    display: block
+
+  &:before
+    content: attr(data-tooltip)
+    position: absolute
+    width: max-content
+    top: -18px
+    right: 0
+    margin-left: 15px
+    padding: 10px
+    border-radius: 0.75em
+    background: #000
+    color: #fff
+    text-align: center
+    display: none
+    font-size: .5em
+    font-weight: normal
+
+  &:after
+    content: ""
+    position: absolute
+    right: 2px
+    top: -1px
+    transform: rotate(270deg)
+    border: 10px solid
+    border-color: transparent #000 transparent transparent
+    display: none
