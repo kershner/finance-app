@@ -101,7 +101,7 @@ class CustomUser(AbstractUser):
         net_monthly_income = total_monthly_income - total_monthly_expenses
 
         net_monthly_income_with_raise = net_monthly_income
-        if years_to_project > 1:
+        if self.toggle_raise:
             paycheck_total = self.get_paychecks_total()
             income_without_paycheck = total_monthly_income - paycheck_total
             for year in range(2, years_to_project + 1):
@@ -126,18 +126,19 @@ class CustomUser(AbstractUser):
 
         net_income_calculations = []
         for month in months:
-            date_string = (now + timedelta(month * 365 / 12)).strftime('%b %d, %Y')
+            new_date = now + timedelta(month * 365 / 12)
+            date_string = new_date.strftime('%b %d, %Y')
             net_income = income_calcs['net_monthly_income'] * month
             new_total = self.starting_value + net_income
             new_age = self.get_years_old_from_num_months(num_months=month)
             investment = (total_monthly_investment * month) if total_monthly_investment else 0.0
 
             years_rounded = round(month / 12, 2)
-            current_year = math.floor(years_rounded) + 1
             years_plural = 's' if years_rounded != 1.00 else ''
             years_string = '{:.2g} year{}'.format(years_rounded, years_plural)
 
-            if self.toggle_raise and current_year > 1:
+            raise_applies_to_date = new_date.year > now.year
+            if self.toggle_raise and raise_applies_to_date:
                 net_income_with_raise = net_income
                 net_income = math.floor(net_income_with_raise * self.raise_pct)
                 new_total = math.floor(new_total * self.raise_pct)
@@ -149,7 +150,7 @@ class CustomUser(AbstractUser):
                 time_from_now_string = years_string
 
             net_income_calculations.append({
-                'years_from_now': years_rounded,
+                'raise_applies_to_date': raise_applies_to_date,
                 'time_from_now': time_from_now_string,
                 'date_string': date_string,
                 'net_income': net_income,
@@ -182,11 +183,24 @@ class MutedFieldMixin(models.Model):
         self.__original_muted = self.muted
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
-        # If muting or unmuting group, mute/unmute all group's transactions
         if self.muted != self.__original_muted:
+            # If muting/unmuting group, mute/unmute all group's transactions
             if isinstance(self, TransactionGroup):
                 all_transactions = MonthlyTransaction.objects.filter(group=self).all()
                 all_transactions.update(muted=self.muted)
+            # If muting/unmuting transaction, check if we need to mute/unmute group
+            elif isinstance(self, MonthlyTransaction):
+                group_transactions = MonthlyTransaction.objects.filter(group=self.group).exclude(id=self.id)
+                group_qs = TransactionGroup.objects.filter(id=self.group.id)
+                if self.muted:
+                    unmuted_transaction_in_group = group_transactions.filter(muted=False).exists()
+                    if not unmuted_transaction_in_group:
+                        group_qs.update(muted=True)
+
+                else:
+                    muted_transaction_in_group = group_transactions.filter(muted=True).exists()
+                    if not muted_transaction_in_group:
+                        group_qs.update(muted=False)
 
         super(MutedFieldMixin, self).save(force_insert, force_update, *args, **kwargs)
         self.__original_muted = self.muted

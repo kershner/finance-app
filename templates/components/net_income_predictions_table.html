@@ -21,24 +21,9 @@
             <th>Time From Now</th>
             <th>Date</th>
             <th>{{ user.name }}'s Age</th>
-            <th>
-                New Total
-                {% if user.toggle_raise and years_to_project > 1 %}
-                    <span class="with-raise-header">
-                        (with {{ user.raise_pct }}% raise)</span>
-                {% endif %}
-            </th>
-
+            <th>New Total</th>
             <th>Investment</th>
-
-            <th>
-                Net Income
-                {% if user.toggle_raise and years_to_project > 1 %}
-                    <span class="with-raise-header">
-                        (with {{ user.raise_pct }}% raise)
-                    </span>
-                {% endif %}
-            </th>
+            <th>Net Income</th>
         </tr>
 
         {% for row in net_income_calculations %}
@@ -49,7 +34,7 @@
 
             <td>
                 {{ row.new_total|money_format }}
-                {% if user.toggle_raise and row.years_from_now > 1 %}
+                {% if user.toggle_raise and row.raise_applies_to_date %}
                     <span class="with-raise-marker tooltip" data-tooltip="Calculated with a {{ user.raise_pct }}% raise">*</span>
                 {% endif %}
             </td>
@@ -58,7 +43,7 @@
 
             <td>
                 {{ row.net_income|money_format }}
-                {% if user.toggle_raise and row.years_from_now > 1 %}
+                {% if user.toggle_raise and row.raise_applies_to_date %}
                     <span class="with-raise-marker tooltip" data-tooltip="Calculated with a {{ user.raise_pct }}% raise">*</span>
                 {% endif %}
             </td>
