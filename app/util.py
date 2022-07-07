@@ -50,11 +50,15 @@ def get_model(object_type):
     from .models import MonthlyTransaction
     from django.apps import apps
 
+    model = MonthlyTransaction
+
+    if not object_type:
+        return model
+
     # Remove spaces from class names if present (used for display)
     if ' ' in object_type:
         object_type = ''.join(object_type.split(' '))
 
-    model = MonthlyTransaction
     if object_type:
         try:
             model = apps.get_model('app', object_type)

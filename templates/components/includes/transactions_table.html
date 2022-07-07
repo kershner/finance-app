@@ -15,7 +15,11 @@
         </div>
 
         {% for transaction in data.transactions %}
-        <div class="transaction editable {% if transaction.muted %}muted{% endif %}" data-id="{{ transaction.id }}" data-type="MonthlyTransaction">
+        <div class="transaction editable {% if transaction.muted %}muted tooltip{% endif %}"
+             {% if transaction.muted %}data-tooltip="Transaction muted"{% endif %}
+             data-id="{{ transaction.id }}"
+             data-type="MonthlyTransaction">
+
             <div class="transaction-name">
                 <p>{{ transaction }}</p>
             </div>
