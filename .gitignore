@@ -8,3 +8,6 @@ app/management/commands/create_expenses.py
 app/management/commands/setup_db.py
 app/migrations/
 static/assets/
+static/admin/
+static/colorfield/
+static/django_light/
