@@ -5,3 +5,5 @@ services:
       - "8020:8010"
     volumes:
       - ".:/opt/finance_by_month/"
+    entrypoint:
+      - "/opt/finance_by_month/docker_entrypoint.sh"

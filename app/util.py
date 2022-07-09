@@ -32,8 +32,6 @@ def setup_db_first_time():
     # Create dummy user on first startup
     user = CustomUser.objects.create(
         username='new_user',
-        first_name='First Name',
-        last_name='Last Name',
         birth_date=timezone.now(),
         starting_value=0,
         is_staff=True,

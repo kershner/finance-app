@@ -31,6 +31,9 @@ class CustomUser(AbstractUser):
     class Meta:
         verbose_name_plural = 'User'
 
+    def get_short_name(self):
+        return self.name
+
     def get_admin_url(self):
         app, model = (self._meta.app_label, self._meta.model_name)
         return reverse('admin:{}_{}_change'.format(app, model), args=(self.pk,))
