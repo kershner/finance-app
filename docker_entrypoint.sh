@@ -3,6 +3,7 @@
 # Run Django migrations
 python manage.py makemigrations
 python manage.py migrate
+python manage.py collectstatic --no-input
 
 # Set permissions on newly created DB
 chmod 777 /opt/finance_by_month/db.sqlite3
