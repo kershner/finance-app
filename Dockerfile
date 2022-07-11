@@ -13,6 +13,9 @@ COPY . opt/finance_by_month
 # run dos2unix to prevent line ending errors
 RUN dos2unix opt/finance_by_month/docker_entrypoint.sh && apt-get --purge remove -y dos2unix
 
+# set exec permissions on entrypoint
+RUN chmod +x opt/finance_by_month/docker_entrypoint.sh
+
 # install python requirements
 WORKDIR opt/finance_by_month
 RUN pip install -r requirements.txt --cache-dir pip_cache

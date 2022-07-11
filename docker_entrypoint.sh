@@ -10,4 +10,12 @@ chmod 777 /opt/finance_by_month/db.sqlite3
 
 # Start server
 (gunicorn app.wsgi --user www-data --bind 0.0.0.0:8010 --workers 3) &
+echo "
+####################################################################################################
+
+Finance App is running!
+- Visit localhost:8020/ in your browser.
+
+####################################################################################################
+" &
 nginx -g "daemon off;"
